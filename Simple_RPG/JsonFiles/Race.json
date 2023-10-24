@@ -1,0 +1,44 @@
+{
+  "Drow": {
+    "charismaBonus": 1,
+    "dexterityBonus": 2,
+    "intelligenceBonus": 1,
+    "strengthBonus": 0,
+    "wisdomBonus": 0
+  },
+  "Dwarf": {
+    "charismaBonus": 0,
+    "dexterityBonus": 0,
+    "intelligenceBonus": 0,
+    "strengthBonus": 2,
+    "wisdomBonus": 1
+  },
+  "Elf": {
+    "charismaBonus": 0,
+    "dexterityBonus": 2,
+    "intelligenceBonus": 1,
+    "strengthBonus": 0,
+    "wisdomBonus": 1
+  },
+  "Human": {
+    "charismaBonus": 1,
+    "dexterityBonus": 1,
+    "intelligenceBonus": 1,
+    "strengthBonus": 1,
+    "wisdomBonus": 1
+  },
+  "Orc": {
+    "charismaBonus": 0,
+    "dexterityBonus": 0,
+    "intelligenceBonus": 0,
+    "strengthBonus": 2,
+    "wisdomBonus": 0
+  },
+  "Tiefling": {
+    "charismaBonus": 2,
+    "dexterityBonus": 1,
+    "intelligenceBonus": 2,
+    "strengthBonus": 0,
+    "wisdomBonus": 0
+  }
+}

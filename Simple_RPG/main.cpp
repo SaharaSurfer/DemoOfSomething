@@ -1,20 +1,10 @@
-#include "Interface.h"
+#include "GamePlayHandler.h"
 
 int main()
 {
-	Interface interface;
-	
-	std::string entry = interface.LoadText("Text\\Entry.txt");
-	interface.RenderText(entry);
-	system("pause");
+	GamePlayHandler game_engine;
 
-	system("cls");
-	std::string character_creation = "Locations\\banner.txt";
-	interface.LoadLocation(character_creation);
-	interface.RenderLocation();
-
-	//Выводятся рассы и ожидается ввод игрока
-	interface.RenderText("Choose your race: \n");
+	game_engine.ProceedCharacterCreation();
 
 	return 0;
 }

@@ -64,18 +64,19 @@ std::string Interface::LoadText(const std::string& LocationName)
 
 void Interface::RenderText(const std::string& Text)
 {
-    int pause = 0, transfer_pointer = -1;
+    int pause = 0;
     for (int i = 0; i < Text.size(); i++)
     {
-        transfer_pointer++;
         pause = Text[i] == '.' ? 150 : (Text[i] == ' ' ? 100 : 50);
         std::cout << Text[i];
-        if ( (transfer_pointer + 1) % FRAME_WIDTH == 0)
-        {
-            std::cout << ((Text[i] == ' ' or Text[i + 1] == ' ') ? "\n" : "\n-");
-        }
-        if (Text[i] == '\n') { transfer_pointer = 0; }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(pause));
     }
+}
+
+json Interface::LoadJSON(const std::string& LocationName)
+{
+    std::string str = LoadText(LocationName);
+    json table{ json::parse(str) };
+
+    return table;
 }

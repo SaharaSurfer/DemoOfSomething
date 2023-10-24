@@ -36,7 +36,7 @@ public:
 	std::string LoadText(const std::string& LocationName);
 	void RenderText(const std::string& Text);
 
-	void LoadJSON(const std::string& LocationName);
+	json LoadJSON(const std::string& LocationName);
 
 	void InteractWithObject(const std::string& ObjectName);
 };
