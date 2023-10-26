@@ -22,14 +22,6 @@ private:
 	void CreateFrame();
 
 public:
-	void StartDialog(const std::string& CharacterName, const std::string& DialogText);
-	void DisplayChoices(const std::vector<std::string>& choices);
-	int CollectPlayerChoice();
-
-	void StartBattle();
-	void ProcessPlayerActions();
-	void ProcessEnemyActions();
-
 	void LoadLocation(const std::string& LocationName);
 	void RenderLocation();
 
@@ -37,6 +29,4 @@ public:
 	void RenderText(const std::string& Text);
 
 	json LoadJSON(const std::string& LocationName);
-
-	void InteractWithObject(const std::string& ObjectName);
 };

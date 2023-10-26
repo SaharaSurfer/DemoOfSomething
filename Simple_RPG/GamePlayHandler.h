@@ -14,4 +14,5 @@ public:
 	GamePlayHandler();
 
 	void ProceedCharacterCreation();
+	void TellJourneyStart();
 };

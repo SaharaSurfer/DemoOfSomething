@@ -86,20 +86,39 @@ GameClass GamePlayHandler::ChoosingClass()
 
 void GamePlayHandler::ProceedCharacterCreation()
 {
-	/*std::string entry = interface.LoadText("Text\\Entry.txt");
+	std::string entry = interface.LoadText("Text\\Entry.txt");
 	interface.RenderText(entry);
 	system("pause");
-
 	system("cls");
+
 	std::string character_creation = "Locations\\banner.txt";
 	interface.LoadLocation(character_creation);
-	interface.RenderLocation();*/
+	interface.RenderLocation();
 
 	// Бонусы класса добавляются за каждый уровень
 	Race race_choice = ChoosingRace();
 	GameClass class_choice = ChoosingClass();
-
 	player = Player(race_choice, class_choice);
+	system("cls");
+}
 
-	player.ShowStats();
+void GamePlayHandler::TellJourneyStart()
+{
+	std::string journey_starts = interface.LoadText("Text\\Beginning_of_the_journey.txt");
+	interface.RenderText(journey_starts);
+
+	json escape_choice = interface.LoadJSON("JsonFiles\\Escape_choice.json");
+
+	for (auto kv = escape_choice[0].begin(); kv != escape_choice[0].end(); kv++)
+	{
+		interface.RenderText(kv.key() + ") " + std::string(kv.value()) + "\n");
+	}
+
+	std::string player_choice = "";
+	std::getline(std::cin, player_choice);
+
+	interface.RenderText(escape_choice[1][player_choice.substr(0, 1)]);
+	system("pause");
+	
+	//Если выбрана ветка 2, то снова появляется окно выбора д-я, но уже с 1 выбором
 }
