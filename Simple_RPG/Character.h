@@ -8,7 +8,7 @@
 
 class Character
 {
-private:
+protected:
 	Race race;
 	GameClass gameclass;
 
@@ -21,7 +21,9 @@ private:
 	std::vector<Item> equipment;
 	std::vector<Item> inventory;
 	std::vector<Ability> abilities;
+
 public:
+	Character();
 	Character(Race r, GameClass gc);
 
 	void ShowStats();

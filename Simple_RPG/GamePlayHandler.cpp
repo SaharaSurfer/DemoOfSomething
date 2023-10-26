@@ -1,12 +1,31 @@
 #include "GamePlayHandler.h"
 
+void from_json(const json& j, Race& r)
+{
+	j.at("strengthBonus").get_to(r.strengthBonus);
+	j.at("dexterityBonus").get_to(r.dexterityBonus);
+	j.at("intelligenceBonus").get_to(r.intelligenceBonus);
+	j.at("wisdomBonus").get_to(r.wisdomBonus);
+	j.at("charismaBonus").get_to(r.charismaBonus);
+}
+
+void from_json(const json& j, GameClass& gc)
+{
+	j.at("healthBonus").get_to(gc.healthBonus);
+	j.at("manaBonus").get_to(gc.manaBonus);
+	j.at("defenseBonus").get_to(gc.defenseBonus);
+	j.at("attackBonus").get_to(gc.attackBonus);
+}
+
+GamePlayHandler::GamePlayHandler() {}
+
 Race GamePlayHandler::ChoosingRace()
 {
 	interface.RenderText("Choose your race: \n");
 	json races = interface.LoadJSON("JsonFiles\\Race.json");
 
 	int race_index = 0;
-	for (auto kv = races.begin(); kv != races.end(); kv++)
+	for (auto kv = races[0].begin(); kv != races[0].end(); kv++)
 	{
 		race_index++;
 		interface.RenderText(std::to_string(race_index) + ") " + kv.key() + ": ");
@@ -26,10 +45,9 @@ Race GamePlayHandler::ChoosingRace()
 	std::getline(std::cin, player_race_choice);
 
 	Race race;
-	//Найти способ получить доступ к расе по индексу.
-	//Записать через go_to в race
-	//auto k = races.at("Drow");
-	//std::cout << k;
+	player_race_choice = races[1][player_race_choice.substr(0, 1)];
+	race.name = player_race_choice;
+	races[0][player_race_choice].get_to(race);
 
 	return race;
 }
@@ -39,7 +57,7 @@ GameClass GamePlayHandler::ChoosingClass()
 	json classes = interface.LoadJSON("JsonFiles\\Class.json");
 
 	int class_index = 0;
-	for (auto kv = classes.begin(); kv != classes.end(); kv++)
+	for (auto kv = classes[0].begin(); kv != classes[0].end(); kv++)
 	{
 		class_index++;
 		interface.RenderText(std::to_string(class_index) + ") " + kv.key() + ": ");
@@ -59,6 +77,9 @@ GameClass GamePlayHandler::ChoosingClass()
 	std::getline(std::cin, player_class_choice);
 
 	GameClass game_class;
+	player_class_choice = classes[1][player_class_choice.substr(0, 1)];
+	game_class.name = player_class_choice;
+	classes[0][player_class_choice].get_to(game_class);
 
 	return game_class;
 }
@@ -77,4 +98,8 @@ void GamePlayHandler::ProceedCharacterCreation()
 	// Бонусы класса добавляются за каждый уровень
 	Race race_choice = ChoosingRace();
 	GameClass class_choice = ChoosingClass();
+
+	player = Player(race_choice, class_choice);
+
+	player.ShowStats();
 }

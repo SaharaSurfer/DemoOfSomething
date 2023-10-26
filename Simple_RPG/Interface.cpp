@@ -67,7 +67,7 @@ void Interface::RenderText(const std::string& Text)
     int pause = 0;
     for (int i = 0; i < Text.size(); i++)
     {
-        pause = Text[i] == '.' ? 150 : (Text[i] == ' ' ? 100 : 50);
+        pause = Text[i] == '.' ? 150 : (Text[i] == ' ' ? 100 : 25);
         std::cout << Text[i];
         std::this_thread::sleep_for(std::chrono::milliseconds(pause));
     }

@@ -1,7 +1,12 @@
 #include "Character.h"
 
+Character::Character() {}
+
 Character::Character(Race r, GameClass gc)
 {
+	race = r;
+	gameclass = gc;
+
 	strength += r.strengthBonus;
 	dexterity += r.dexterityBonus;
 	intelligence += r.intelligenceBonus;

@@ -1,50 +1,62 @@
-{
-  "Warrior": {
-    "healthBonus": 2,
-    "manaBonus": 0,
-    "defenseBonus": 2,
-    "attackBonus": 2
+[
+  {
+    "Cleric": {
+      "healthBonus": 2,
+      "manaBonus": 1,
+      "defenseBonus": 1,
+      "attackBonus": 1
+    },
+    "Druid": {
+      "healthBonus": 1,
+      "manaBonus": 2,
+      "defenseBonus": 1,
+      "attackBonus": 1
+    },
+    "Mage": {
+      "healthBonus": 0,
+      "manaBonus": 2,
+      "defenseBonus": 0,
+      "attackBonus": 1
+    },
+    "Monk": {
+      "healthBonus": 1,
+      "manaBonus": 1,
+      "defenseBonus": 2,
+      "attackBonus": 1
+    },
+    "Paladin": {
+      "healthBonus": 2,
+      "manaBonus": 1,
+      "defenseBonus": 2,
+      "attackBonus": 1
+    },
+    "Rogue": {
+      "healthBonus": 1,
+      "manaBonus": 0,
+      "defenseBonus": 1,
+      "attackBonus": 2
+    },
+    "Warlock": {
+      "healthBonus": 1,
+      "manaBonus": 2,
+      "defenseBonus": 1,
+      "attackBonus": 2
+    },
+    "Warrior": {
+      "healthBonus": 2,
+      "manaBonus": 0,
+      "defenseBonus": 2,
+      "attackBonus": 2
+    }
   },
-  "Mage": {
-    "healthBonus": 0,
-    "manaBonus": 2,
-    "defenseBonus": 0,
-    "attackBonus": 1
-  },
-  "Rogue": {
-    "healthBonus": 1,
-    "manaBonus": 0,
-    "defenseBonus": 1,
-    "attackBonus": 2
-  },
-  "Paladin": {
-    "healthBonus": 2,
-    "manaBonus": 1,
-    "defenseBonus": 2,
-    "attackBonus": 1
-  },
-  "Cleric": {
-    "healthBonus": 2,
-    "manaBonus": 1,
-    "defenseBonus": 1,
-    "attackBonus": 1
-  },
-  "Druid": {
-    "healthBonus": 1,
-    "manaBonus": 2,
-    "defenseBonus": 1,
-    "attackBonus": 1
-  },
-  "Monk": {
-    "healthBonus": 1,
-    "manaBonus": 1,
-    "defenseBonus": 2,
-    "attackBonus": 1
-  },
-  "Warlock": {
-    "healthBonus": 1,
-    "manaBonus": 2,
-    "defenseBonus": 1,
-    "attackBonus": 2
+  {
+    "1": "Cleric",
+    "2": "Druid",
+    "3": "Mage",
+    "4": "Monk",
+    "5": "Paladin",
+    "6": "Rogue",
+    "7": "Warlock",
+    "8": "Warrior"
   }
-}
+]

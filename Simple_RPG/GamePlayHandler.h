@@ -6,9 +6,12 @@ class GamePlayHandler
 {
 private:
 	Interface interface;
+	Player player;
 
 	Race ChoosingRace();
 	GameClass ChoosingClass();
 public:
+	GamePlayHandler();
+
 	void ProceedCharacterCreation();
 };
