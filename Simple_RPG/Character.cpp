@@ -19,7 +19,20 @@ Character::Character(Race r, GameClass gc)
 	attack += gc.attackBonus * level;
 }
 
-void Character::ShowStats()
+int Character::GetDexBonus()
+{
+	std::map<int, int> bonuses
+	{
+		{10, 0}, {11, 1}, {12, 2},
+		{13, 3}, {14, 3}, {15, 3},
+		{16, 3}, {17, 4}, {18, 4},
+		{19, 5}, {20, 6}
+	};
+	
+	return bonuses[dexterity];
+}
+
+std::string Character::GetStats()
 {
 	std::string text = 
 		"Race - " + race.name 
@@ -35,5 +48,5 @@ void Character::ShowStats()
 		+ "\nIntelligence = " + std::to_string(intelligence)
 		+ "\nWisdom = " + std::to_string(wisdom)
 		+ "\nCharisma = " + std::to_string(charisma);
-	std::cout << text.c_str();
+	return text;
 }

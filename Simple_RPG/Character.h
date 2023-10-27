@@ -26,5 +26,7 @@ public:
 	Character();
 	Character(Race r, GameClass gc);
 
-	void ShowStats();
+	int GetDexBonus();
+
+	std::string GetStats();
 };

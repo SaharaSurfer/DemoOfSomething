@@ -108,17 +108,27 @@ void GamePlayHandler::TellJourneyStart()
 	interface.RenderText(journey_starts);
 
 	json escape_choice = interface.LoadJSON("JsonFiles\\Escape_choice.json");
+	std::unordered_set<std::string> player_choices;
 
-	for (auto kv = escape_choice[0].begin(); kv != escape_choice[0].end(); kv++)
+	while (player_choices.size() != escape_choice[0].size())
 	{
-		interface.RenderText(kv.key() + ") " + std::string(kv.value()) + "\n");
+		for (auto kv = escape_choice[0].begin(); kv != escape_choice[0].end(); kv++)
+		{
+			if (player_choices.count(kv.key()) == 0)
+			{
+				interface.RenderText(kv.key() + ") " + std::string(kv.value()) + "\n");
+			}
+		}
+
+		std::string player_choice = "";
+		std::getline(std::cin, player_choice);
+		player_choice = player_choice.substr(0, 1);
+		player_choices.insert(player_choice);
+
+		interface.RenderText(escape_choice[1][player_choice]);
+		system("pause");
+
+		std::string is_non_return = escape_choice[2][player_choice];
+		if (std::stoi(is_non_return) == 0) { break; }
 	}
-
-	std::string player_choice = "";
-	std::getline(std::cin, player_choice);
-
-	interface.RenderText(escape_choice[1][player_choice.substr(0, 1)]);
-	system("pause");
-	
-	//Если выбрана ветка 2, то снова появляется окно выбора д-я, но уже с 1 выбором
 }
