@@ -84,51 +84,165 @@ GameClass GamePlayHandler::ChoosingClass()
 	return game_class;
 }
 
-void GamePlayHandler::ProceedCharacterCreation()
+void GamePlayHandler::CreatePlayerCharacter()
 {
+	//Display the introductory text
 	std::string entry = interface.LoadText("Text\\Entry.txt");
 	interface.RenderText(entry);
 	system("pause");
 	system("cls");
 
+	//Display the ASCII art for the character creation screen
 	std::string character_creation = "Locations\\banner.txt";
 	interface.LoadLocation(character_creation);
 	interface.RenderLocation();
 
-	// Бонусы класса добавляются за каждый уровень
+	// Creating a player character
 	Race race_choice = ChoosingRace();
 	GameClass class_choice = ChoosingClass();
 	player = Player(race_choice, class_choice);
 	system("cls");
 }
 
-void GamePlayHandler::TellJourneyStart()
+int GamePlayHandler::HandleEvent(json node)
+{
+	std::string event_type = node["event"];
+
+	int is_over = 0;
+	if (event_type == "ReceiveItems")
+	{
+		is_over = ReceiveItems(node);
+	}
+	else if (event_type == "ProcessLockpicking")
+	{
+		is_over = ProcessLockpicking(node);
+	}
+
+	return is_over;
+}
+
+int GamePlayHandler::ReceiveItems(json node)
+{
+	for (int i = 0; i < node["number_of_items"]; i++)
+	{
+		Item* item = new Item;
+		if (node["item_name"] == std::string("Lockpick"))
+		{
+			item = new Lockpick();
+		}
+		player.AddItemToInventory(item);
+	}
+	interface.RenderText(std::string(node["text"]) + "\n");
+
+	return 0;
+}
+
+int GamePlayHandler::ProcessLockpicking(json node)
+{
+	srand(time(0));
+	json failure_text = node["fail"];
+
+	if (node["interactive_object_name"] == "Lock")
+	{
+		Lock lock = Lock();
+		lock.SetLockLevel(node["security_level"]);
+	
+		while (player.GetInventoryStats().find("Lockpick") != std::string::npos)
+		{
+			Item* item = player.GetItemFromInventory("Lockpick");
+			Lockpick* lockpick = dynamic_cast<Lockpick*>(item);
+			
+			bool is_open = lockpick -> UnlockObject(lock, player);
+			if (is_open)
+			{
+				interface.RenderText(std::string(node["success"]) + "\n");
+				return 1;
+			}
+			
+			interface.RenderText(std::string(failure_text[rand() % 3]) + "\n");
+			player.DeleteItemFromInventory("Lockpick");
+
+			int lockpick_num = player.CountItemInInventory("Lockpick");
+			std::string text =
+				"<You have " +
+				std::to_string(lockpick_num) + 
+				" of lock picks left>\n";
+			interface.RenderText(text);
+
+			if (lockpick_num == 0) { return 0; }
+
+			return 2;
+		}
+	}
+	interface.RenderText(std::string(node["none"]));
+	return 0;
+}
+
+void GamePlayHandler::ProcessDecisionTree(json tree)
+{
+	std::vector<json> nodes_in_use;
+
+	//Filling in initial options
+	for (auto& node : tree)
+	{
+		nodes_in_use.push_back(node);
+	}
+
+	//Starting to process the player's decisions
+	while (nodes_in_use.size() > 0)
+	{
+		//Bringing up the possible player choices
+		for (int i = 0; i < nodes_in_use.size(); i++)
+		{
+			std::string text = std::to_string(i + 1) + ") " + std::string(nodes_in_use[i]["choice_name"]) + "\n";
+			interface.RenderText(text);
+		}
+
+		//Getting the player's solution
+		std::string player_choice;
+		std::getline(std::cin, player_choice);
+		player_choice = player_choice.substr(0, 1);
+
+		json chosen_node = nodes_in_use[std::stoi(player_choice) - 1];
+
+		/*If the player's choices led to a plot turning point/end game,
+		then discard the rest of the branches*/
+		if (chosen_node["returnable"] == 0)
+		{
+			nodes_in_use.clear();
+		}
+
+		//If the player's choice caused an event to occur, we process it
+		if (chosen_node["event"] != "0")
+		{
+			// 0 - ...
+			// 1 - break
+			// 2 - retry
+			int is_over = HandleEvent(chosen_node);
+			if (is_over == 1) { break; }
+			else if (is_over == 2) { continue; }
+		}
+		else { interface.RenderText(std::string(chosen_node["text"]) + "\n"); }
+
+		//Removing already used branch
+		nodes_in_use.erase(nodes_in_use.begin() + std::stoi(player_choice) - 1);
+
+		//Recording new branches if any
+		if (chosen_node.contains("options"))
+		{
+			for (auto& node : chosen_node["options"])
+			{
+				nodes_in_use.push_back(node);
+			}
+		}
+	}
+}
+
+void GamePlayHandler::EscapeFromCage()
 {
 	std::string journey_starts = interface.LoadText("Text\\Beginning_of_the_journey.txt");
 	interface.RenderText(journey_starts);
 
-	json escape_choice = interface.LoadJSON("JsonFiles\\Escape_choice.json");
-	std::unordered_set<std::string> player_choices;
-
-	while (player_choices.size() != escape_choice[0].size())
-	{
-		for (auto kv = escape_choice[0].begin(); kv != escape_choice[0].end(); kv++)
-		{
-			if (player_choices.count(kv.key()) == 0)
-			{
-				interface.RenderText(kv.key() + ") " + std::string(kv.value()) + "\n");
-			}
-		}
-
-		std::string player_choice = "";
-		std::getline(std::cin, player_choice);
-		player_choice = player_choice.substr(0, 1);
-		player_choices.insert(player_choice);
-
-		interface.RenderText(escape_choice[1][player_choice]);
-		system("pause");
-
-		std::string is_non_return = escape_choice[2][player_choice];
-		if (std::stoi(is_non_return) == 0) { break; }
-	}
+	json escape_choice = interface.LoadJSON("JsonFiles\\Escape.json");
+	ProcessDecisionTree(escape_choice);
 }

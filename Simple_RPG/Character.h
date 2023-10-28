@@ -18,8 +18,8 @@ protected:
 	int strength = 10, dexterity = 10;
 	int intelligence = 10, wisdom = 10, charisma = 10;
 
-	std::vector<Item> equipment;
-	std::vector<Item> inventory;
+	std::vector<Item*> equipment;
+	std::vector<Item*> inventory;
 	std::vector<Ability> abilities;
 
 public:
@@ -28,5 +28,11 @@ public:
 
 	int GetDexBonus();
 
-	std::string GetStats();
+	std::string GetCharacterStats();
+	std::string GetInventoryStats();
+
+	void AddItemToInventory(Item* object);
+	void DeleteItemFromInventory(std::string name);
+	Item* GetItemFromInventory(std::string name);
+	int CountItemInInventory(std::string name);
 };

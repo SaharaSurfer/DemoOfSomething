@@ -18,4 +18,6 @@ public:
 	std::string GetName();
 	std::string GetDescription();
 	std::string GetEffect();
+
+	virtual ~Item();
 };

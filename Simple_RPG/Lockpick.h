@@ -1,6 +1,6 @@
 #pragma once
 #include "Item.h"
-#include "Interactive.h"
+#include "Lock.h"
 #include "Player.h"
 
 class Lockpick : public Item
@@ -10,5 +10,5 @@ private:
 public:
 	Lockpick();
 
-	void UnlockObject(Interactive& object, Player& player);
+	bool UnlockObject(Lock& object, Player& player);
 };

@@ -5,7 +5,7 @@ Lockpick::Lockpick()
 	LoadData("Lockpick");
 }
 
-void Lockpick::UnlockObject(Interactive& object, Player& player)
+bool Lockpick::UnlockObject(Lock& object, Player& player)
 {
 	std::srand(time(0));
 
@@ -14,5 +14,8 @@ void Lockpick::UnlockObject(Interactive& object, Player& player)
 	if (player_toss >= object.GetLockLevel())
 	{
 		object.SetLockLevel(0);
+		return 1;
 	}
+	
+	return 0;
 }

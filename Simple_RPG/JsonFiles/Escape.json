@@ -1,0 +1,34 @@
+ [
+  {
+    "choice_name": "Listen to the Situation Around",
+    "returnable": 1,
+    "event": "0",
+    "text": "You strain your ears to catch the distant conversations of your captors. Judging by their screams and indignation, they are gambling, but meanwhile you can hear them discussing the role of their guild accomplice who participated in your capture. The conversation is cryptic, revealing that one of your own betrayed you, but it remains uncertain who exactly was responsible for your capture."
+  },
+    {
+      "choice_name": "Inspect the Deceased Comrade",
+      "returnable": 1,
+      "event": "ReceiveItems",
+      "item_name": "Lockpick",
+      "number_of_items": 3,
+      "text": "You shift your focus to the deceased mercenary from your guild lying opposite you. While searching the corpse, your hands brush against a torn pocket, and several lockpicks fall out. These small tools may hold the key to unlocking the cage and securing your escape.",
+      "options": 
+      [
+        {
+          "choice_name": "Use the lockpicks to open the cell.",
+          "returnable": 1,
+          "event": "ProcessLockpicking",
+          "interactive_object_name": "Lock",
+          "security_level": 15,
+          "success": "The character deftly examines the lock, swiftly inserting the lockpick into the mechanism. With practiced precision, they delicately manipulate the tumblers, listening for the subtle clicks. The tension wrench turns slowly, the satisfying sound of the lock releasing echoing faintly through the crypt-like chamber. The cage door swings open silently, granting the hero freedom.",
+          "none": "You don't have the necessary tools to attempt lockpicking.",
+          "fail": 
+          [
+            "The character, focusing intently, skillfully manipulates the lock's tumblers, aiming for success. However, an unexpected obstruction within the lock halts their progress. In a sudden twist, the lockpick snaps with a quiet but audible crack, the tension too much for the delicate tool to endure.",
+            "Despite the character's calculated movements, a misjudged twist of the lockpick within the mechanism causes an abrupt resistance. The lockpick splinters and breaks, a small shard falling to the floor with a faint clink, rendering the tool useless for any further attempts.",
+            "Despite the character's skillful maneuvering, a momentary lapse causes the lock pick to snap with a faint crackle. Part of the tool breaks off, but the lock remains intact. With the lock pick ruined, the character assesses the situation."
+          ]
+        }
+      ]
+    }
+  ]

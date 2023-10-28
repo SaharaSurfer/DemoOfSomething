@@ -32,7 +32,7 @@ int Character::GetDexBonus()
 	return bonuses[dexterity];
 }
 
-std::string Character::GetStats()
+std::string Character::GetCharacterStats()
 {
 	std::string text = 
 		"Race - " + race.name 
@@ -49,4 +49,55 @@ std::string Character::GetStats()
 		+ "\nWisdom = " + std::to_string(wisdom)
 		+ "\nCharisma = " + std::to_string(charisma);
 	return text;
+}
+
+std::string Character::GetInventoryStats()
+{
+	std::string text = "";
+	for (int i = 0; i < inventory.size(); i++)
+	{
+		text += inventory[i] -> GetName() + ", ";
+	}
+	return text;
+}
+
+void Character::AddItemToInventory(Item* object)
+{
+	inventory.push_back(object);
+}
+
+void Character::DeleteItemFromInventory(std::string name)
+{
+	for (int i = 0; i < inventory.size(); i++)
+	{
+		if (inventory[i] -> GetName() == name)
+		{
+			inventory.erase(inventory.begin() + i);
+			break;
+		}
+	}
+}
+
+Item* Character::GetItemFromInventory(std::string name) 
+{
+	for (Item* item : inventory)
+	{
+		if (item -> GetName() == name)
+		{
+			return item;
+		}
+	}
+}
+
+int Character::CountItemInInventory(std::string name)
+{
+	int cnt = 0;
+	for (Item* item : inventory)
+	{
+		if (item -> GetName() == name)
+		{
+			cnt++;
+		}
+	}
+	return cnt;
 }
