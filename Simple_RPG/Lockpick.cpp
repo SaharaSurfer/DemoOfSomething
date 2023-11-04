@@ -9,7 +9,7 @@ bool Lockpick::UnlockObject(Lock& object, Player& player)
 {
 	std::srand(time(0));
 
-	int player_toss = rand() % 20 + player.GetDexBonus();
+	int player_toss = rand() % 20 + 1 + player.GetStatBonus("DEX");
 	
 	if (player_toss >= object.GetLockLevel())
 	{

@@ -1,0 +1,426 @@
+{
+  "Cleric": 
+  [
+    [
+      {
+        "name": "Smite",
+        "description": "Unleashes a divine strike against an enemy.",
+        "damage": 20,
+        "mana_cost": 15
+      },
+      {
+        "name": "Divine Shield",
+        "description": "Increases defense by 20% for 2 turns.",
+        "defense_boost": 20,
+        "turns": 2,
+        "mana_cost": 10
+      },
+      {
+        "name": "Healing Light",
+        "description": "Restores health to the caster",
+        "heal": 10,
+        "mana_cost": 20
+      }
+    ],
+    [
+      {
+        "name": "Holy Spear",
+        "description": "Casts a spear of holy energy towards a single enemy",
+        "damage": 25,
+        "mana_cost": 20
+      },
+      {
+        "name": "Shielf of Faith",
+        "description": "Increases personal defense by 30% for 3 turns",
+        "defense_boost": 30,
+        "turns": 3,
+        "mana_cost": 15
+      },
+      {
+        "name": "Blessed Recovery",
+        "description": "Restores health to the caster",
+        "heal": 20,
+        "mana_cost": 25
+      }
+    ],
+    [
+      {
+        "name": "Celestial Blast",
+        "description": "Unleashes a burst of divine energy on a single target",
+        "damage": 60,
+        "mana_cost": 40
+      },
+      {
+        "name": "Guardian's Ward",
+        "description": "Increases personal defense by 40% for 3 turns.",
+        "defense_boost": 40,
+        "turns": 3,
+        "mana_cost": 25
+      },
+      {
+        "name": "Divine Resurgence",
+        "description": "Restores the caster's health significantly.",
+        "heal": 40,
+        "mana_cost": 35
+      }
+    ]
+  ],
+  "Druid": 
+  [
+    [
+      {
+        "name": "Thorn Whip",
+        "description": "Summons thorny vines to strike a single target.",
+        "damage": 25,
+        "mana_cost": 10
+      },
+      {
+        "name": "Barkskin",
+        "description": "Increases personal defense by 20% for 2 turns",
+        "defense_boost": 20,
+        "turns": 2,
+        "mana_cost": 15
+      },
+      {
+        "name": "Nourishing Mending",
+        "description": "Calls upon nature's healing powersr",
+        "heal": 30,
+        "mana_cost": 20
+      }
+    ],
+    [
+      {
+        "name": "Entangling Vines",
+        "description": "Wraps vines around the enemy, dealing damage and bleeding for 2 turns",
+        "damage": 20,
+        "periodic_damage": 5,
+        "turns": 2,
+        "mana_cost": 20
+      },
+      {
+        "name": "Ironwood Skin",
+        "description": "Increases personal defense by 30% for 3 turns",
+        "defense_boost": 30,
+        "turns": 3,
+        "mana_cost": 25
+      },
+      {
+        "name": "Photosynthesis",
+        "description": "Absorbs light and nature's energy for healing",
+        "heal": 35,
+        "mana_cost": 30
+      }
+    ],
+    [
+      {
+        "name": "Mighty Oak",
+        "description": "Increases personal defense by 50% for 3 turns.",
+        "defense_boost": 50,
+        "turns": 3,
+        "mana_cost": 25
+      },
+      {
+        "name": "Gaea's Embrace",
+        "description": "Invokes the life force of the earth for rejuvenation.",
+        "heal": 60,
+        "mana_cost": 45
+      }
+    ]
+  ],
+  "Mage": 
+  [
+    [
+      {
+        "name": "Firebolt",
+        "description": "Cast a bolt of fire at a single target",
+        "damage": 20,
+        "mana_cost": 10
+      },
+      {
+        "name": "Mage Armor",
+        "description": "Increases personal defense by 20% for 2 turns",
+        "defense_boost": 20,
+        "turns": 2,
+        "mana_cost": 15
+      }
+    ],
+    [
+      {
+        "name": "Ice Shard",
+        "description": "Hurls a shard of ice at an enemy",
+        "damage": 30,
+        "mana_cost": 20
+      },
+      {
+        "name": "Mirror Image",
+        "description": "Creates multiple copies of the mage, making it harder for enemies to target the real mage",
+        "defense_boost": 40,
+        "turns": 1,
+        "mana_cost": 25
+      },
+      {
+        "name": "Mana Infusion",
+        "description": "Siphons ambient mana for a quick replenishment.",
+        "mana": 40
+      }
+    ],
+    [
+      {
+        "name": "Chain Lightning",
+        "description": "Releases a bolt of lightning that arcs between multiple enemies.",
+        "damage": 30,
+        "enemy": 3,
+        "mana_cost": 40
+      },
+      {
+        "name": "Empowerment",
+        "description": "Enhances the mage's next spell cast for added potency",
+        "damage_boost": 50,
+        "mana_cost": 45
+      }
+    ]
+  ],
+  "Monk": 
+  [
+    [
+      {
+        "name": "Fist of Fury",
+        "description": "Unleashes a powerful strike on a single target",
+        "damage": 25,
+        "energy_cost": 10
+      },
+      {
+        "name": "Iron Will",
+        "description": "Increases defense by 20% for 2 turns",
+        "defense_boost": 20,
+        "turns": 2,
+        "energy_cost": 15
+      }
+    ],
+    [
+      {
+        "name": "Whirlwind Strike",
+        "description": "Performs a swift spinning strike, damaging multiple foes",
+        "damage": 30,
+        "enemy": 5,
+        "energy_cost": 20
+      },
+      {
+        "name": "Evasion",
+        "description": "Utilizes agility to dodge incoming attacks",
+        "defense_boost": 40,
+        "turns": 1,
+        "energy_cost": 25
+      },
+      {
+        "name": "Empowered Strikes",
+        "description": "Channels ki into strikes for increased damage.",
+        "damage_boost": 50,
+        "turns": 1,
+        "energy_cost": 15
+      }
+    ],
+    [
+      {
+        "name": "Five Elements Palm",
+        "description": "Strikes an enemy's pressure points to deal massive damage.",
+        "damage": 40,
+        "energy_cost": 40
+      },
+      {
+        "name": "Harmony Aura",
+        "description": "Projects a calming aura to heal allies",
+        "heal": 40,
+        "energy_cost": 45
+      }
+    ]
+  ],
+  "Paladin": 
+  [
+    [
+      {
+        "name": "Righteous Strike",
+        "description": "Delivers a holy-infused melee attack on a single target",
+        "damage": 25,
+        "mana_cost": 15
+      },
+      {
+        "name": "Divine Shield",
+        "description": "Increases defense by 20% for 2 turns",
+        "defense_boost": 20,
+        "turns": 2,
+        "mana_cost": 20
+      },
+      {
+        "name": "Lay on Hands",
+        "description": "Calls upon divine healing power to restore health",
+        "health": 70,
+        "mana_cost": 50
+      }
+    ],
+    [
+      {
+        "name": "Holy Smite",
+        "description": "Unleashes a wave of holy energy to damage multiple foes.",
+        "damage": 30,
+        "enemy": 5,
+        "mana_cost": 25
+      },
+      {
+        "name": "Shield of Faith",
+        "description": "Strengthen armor with divine faith, boosting defense",
+        "defense_boost": 25,
+        "turns": 3,
+        "mana_cost": 30
+      },
+      {
+        "name": "Divine Justice",
+        "description": "Empowers the Paladin's strikes with holy might.",
+        "damage_boost": 50,
+        "turns": 1,
+        "mana_cost": 25
+      }
+    ],
+    [
+      {
+        "name": "Sacred Wrath",
+        "description": "Focuses divine fury to deal heavy damage to a single target.",
+        "damage": 40,
+        "mana_cost": 35
+      },
+      {
+        "name": "Blessed Renewal",
+        "description": "Calls upon divine blessings to restore the health",
+        "heal": 35,
+        "mana_cost": 40
+      }
+    ]
+  ],
+  "Rogue": 
+  [
+    [
+      {
+        "name": "Backstab",
+        "description": "Enables a swift, sneaky attack against a single target",
+        "damage": 25,
+        "energy_cost": 15
+      },
+      {
+        "name": "Evasion",
+        "description": "Increases defense by 20% for 2 turns",
+        "defense_boost": 20,
+        "turns": 2,
+        "energy_cost": 20
+      }
+    ],
+    [
+      {
+        "name": "Poisoned Blades",
+        "description": "Coats weapons with a deadly poison, increasing damage.",
+        "damage_boost": 30,
+        "turns": 3,
+        "energy_cost": 30
+      },
+      {
+        "name": "Trickster Gambit",
+        "description": "Duplicates the Rogue's image, creating confusion among enemies.",
+        "defense_boost": 70,
+        "turns": 2,
+        "energy_cost": 35
+      }
+    ],
+    [
+      {
+        "name": "Assassinate",
+        "description": "Delivers a lethal, precision strike on a single enemy.",
+        "damage": 70,
+        "energy_cost": 40
+      }
+    ]
+  ],
+  "Warlock": [
+    [
+      {
+        "name": "Eldritch Bolt",
+        "description": "Unleashes a bolt of dark energy at a single target.",
+        "damage": 20,
+        "mana_cost": 15
+      },
+      {
+        "name": "Shadow Armor",
+        "description": "Increases defense by 20% for 2 turns",
+        "defense_boost": 20,
+        "mana_cost": 20
+      },
+      {
+        "name": "Life Tap",
+        "description": "Siphons life energy to restore the Warlock's health.",
+        "health_reduce": 10,
+        "mana": 25
+      }
+    ],
+    [
+      {
+        "name": "Curse of Agony",
+        "description": "Inflicts lingering pain on a single target",
+        "damage": 15,
+        "periodic_damage": 20,
+        "turns": 3,
+        "mana_cost": 30
+      }
+    ],
+    [
+      {
+        "name": "Drain Life",
+        "description": "Channels life force from an enemy to heal the Warlock.",
+        "damage": 40,
+        "health": 40,
+        "mana_cost": 50
+      }
+    ]
+  ],
+  "Warrior": 
+  [
+    [
+      {
+        "name": "Cleave",
+        "description": "Executes a sweeping attack that damages multiple adjacent enemies.",
+        "damage": 20,
+        "enemy": 5
+      },
+      {
+        "name": "Defensive Stance",
+        "description": "Increases defense by 25% for 2 turns",
+        "defense_boost": 25,
+        "turns": 2
+      }
+    ],
+    [
+      {
+        "name": "Whirlwind",
+        "description": "Spins around, hitting all adjacent enemies with a powerful strike.",
+        "damage": 40,
+        "enemy": 3
+      },
+      {
+        "name": "Second Wind",
+        "description": "Draws upon inner strength to heal wounds.",
+        "health": 40
+      }
+    ],
+    [
+      {
+        "name": "Warrior's Fury",
+        "description": "Unleashes a burst of fury, increasing the Warrior's attack power.",
+        "damage_boost": 70,
+        "turns": 2
+      },
+      {
+        "name": "Shield Wall",
+        "description": "Blocks a significant amount of damage for 2 turns.",
+        "defense_boost": 90,
+        "turns": 2
+      }
+    ]
+  ]
+}

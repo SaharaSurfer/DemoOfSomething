@@ -15,14 +15,29 @@ std::string Item::GetName()
 	return name;
 }
 
+void Item::SetName(std::string new_name)
+{
+	name = new_name;
+}
+
 std::string Item::GetDescription()
 {
 	return description;
 }
 
+void Item::SetDescription(std::string new_descr)
+{
+	description = new_descr;
+}
+
 std::string Item::GetEffect()
 {
 	return effect;
+}
+
+void Item::SetEffect(std::string new_effect)
+{
+	effect = new_effect;
 }
 
 Item::~Item() {};

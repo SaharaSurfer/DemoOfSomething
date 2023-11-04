@@ -3,32 +3,107 @@
     "choice_name": "Listen to the Situation Around",
     "returnable": 1,
     "event": "0",
-    "text": "You strain your ears to catch the distant conversations of your captors. Judging by their screams and indignation, they are gambling, but meanwhile you can hear them discussing the role of their guild accomplice who participated in your capture. The conversation is cryptic, revealing that one of your own betrayed you, but it remains uncertain who exactly was responsible for your capture."
+    "experience": 50,
+    "text": "You strain your ears to catch the distant conversations of your captors. Judging by their screams and indignation, they are gambling, but meanwhile you can hear them discussing the role of their guild accomplice who participated in your capture. The conversation is cryptic, revealing that one of your own betrayed you, but it remains uncertain who exactly was responsible for your capture.",
+    "options": 
+    [
+      {
+        "choice_name": "Create noise to get attention",
+        "returnable": 0,
+        "event": "0",
+        "experience": 50,
+        "text": "The hero violently shakes the cell bars, causing a loud metallic clatter, hoping to alert the guards with the echoing noise.\nApproaching footsteps grow louder as the kidnapper draws near the hero's cell.\n*With a sardonic tone* Oh, are you awake yet? My, my, making quite the racket, aren't we?",
+        "options": [
+          {
+            "choice_name": "Strike up a conversation",
+            "returnable": 1,
+            "event": "ProcessDialog",
+            "experience": 50,
+            "dialog_name": "JsonFiles\\EscapeDialog.json"
+          },
+          {
+            "choice_name": "<STR> Attempt to attack",
+            "returnable": 0,
+            "event": "ProcessSurpriseAttack",
+            "experience": 50,
+            "stat_check": "STR",
+            "complexity": 7,
+            "success": "The hero successfully manages to hit the kidnapper against the bars with force. The impact renders the captor momentarily stunned, causing them to slump to the ground, unconscious.\n\n",
+            "fail": "In a frenzied struggle, the hero tries to overpower the captor through the cage bars. As the captor resists, a desperate scuffle ensues. Amidst the chaos, the captor, unable to break free, draws a nearby sword in defense. In the struggle, an accidental and fatal injury befalls the hero.\n\n",
+            "options": [
+              {
+                "choice_name": "Lift the keys off the kidnapper's body",
+                "returnable": 0,
+                "event": "ReceiveItems",
+                "experience": 75,
+                "item_name": "Key",
+                "key_name": "Tenebris Key",
+                "number_of_items": 1,
+                "text": "The hero, seizing the moment, swiftly retrieves the keys from the unconscious kidnapper's pocket. The glint of metal catches the faint light, confirming the hero's success in obtaining the means to unlock the cell.",
+                "options": [
+                  {
+                    "choice_name": "Try to open the cell",
+                    "returnable": 0,
+                    "event": "UseKeyToOpen",
+                    "experience": 75,
+                    "key_needed": "Tenebris Key",
+                    "interactive_object_name": "Lock",
+                    "success": "With deliberate precision, the hero inserts the Tenebris Key into the lock. There's a soft metallic clink as the key turns, echoing faintly in the silence. The lock clicks open, and the cage door swings ajar, granting the hero freedom from captivity.\n\n",
+                    "none": "<You don't have the right key>\n\n",
+                    "options": [
+                      {
+                        "choice_name": "Walk down the corridor where the captor came from",
+                        "returnable": 0,
+                        "event": "0",
+                        "experience": 100,
+                        "text": "As the hero silently proceeds down the corridor, one of the guards rises from the table, perhaps to grab another drink, inadvertently catching sight of the escaping figure. Their eyes widen with sudden realization as they lock gazes with the hero, surprise and alarm etched across their face.\n\nReacting swiftly, the guard calls out to their companion, raising the alarm in an urgent, sharp tone. The second guard, startled by the sudden commotion, swiftly rises to their feet, their hands instinctively reaching for their weapons.",
+                        "options": [
+                          {
+                            "choice_name": "Prepare for battle",
+                            "returnable": 0,
+                            "event": "ProcessFight",
+                            "experience": 100,
+                            "num_of_enemy": 2,
+                            "races_of_enemy": [ "Dwarf", "Drow" ],
+                            "classes_of_enemy": [ "Warrior", "Rogue" ],
+                            "levels": [ 2, 3 ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
-    {
-      "choice_name": "Inspect the Deceased Comrade",
-      "returnable": 1,
-      "event": "ReceiveItems",
-      "item_name": "Lockpick",
-      "number_of_items": 3,
-      "text": "You shift your focus to the deceased mercenary from your guild lying opposite you. While searching the corpse, your hands brush against a torn pocket, and several lockpicks fall out. These small tools may hold the key to unlocking the cage and securing your escape.",
-      "options": 
-      [
-        {
-          "choice_name": "Use the lockpicks to open the cell.",
-          "returnable": 1,
-          "event": "ProcessLockpicking",
-          "interactive_object_name": "Lock",
-          "security_level": 15,
-          "success": "The character deftly examines the lock, swiftly inserting the lockpick into the mechanism. With practiced precision, they delicately manipulate the tumblers, listening for the subtle clicks. The tension wrench turns slowly, the satisfying sound of the lock releasing echoing faintly through the crypt-like chamber. The cage door swings open silently, granting the hero freedom.",
-          "none": "You don't have the necessary tools to attempt lockpicking.",
-          "fail": 
-          [
-            "The character, focusing intently, skillfully manipulates the lock's tumblers, aiming for success. However, an unexpected obstruction within the lock halts their progress. In a sudden twist, the lockpick snaps with a quiet but audible crack, the tension too much for the delicate tool to endure.",
-            "Despite the character's calculated movements, a misjudged twist of the lockpick within the mechanism causes an abrupt resistance. The lockpick splinters and breaks, a small shard falling to the floor with a faint clink, rendering the tool useless for any further attempts.",
-            "Despite the character's skillful maneuvering, a momentary lapse causes the lock pick to snap with a faint crackle. Part of the tool breaks off, but the lock remains intact. With the lock pick ruined, the character assesses the situation."
-          ]
-        }
-      ]
-    }
+  {
+    "choice_name": "Inspect the Deceased Comrade",
+    "returnable": 1,
+    "event": "ReceiveItems",
+    "experience": 50,
+    "item_name": "Lockpick",
+    "number_of_items": 3,
+    "text": "You shift your focus to the deceased mercenary from your guild lying opposite you. While searching the corpse, your hands brush against a torn pocket, and several lockpicks fall out. These small tools may hold the key to unlocking the cage and securing your escape.",
+    "options": [
+      {
+        "choice_name": "<DEX> Use the lockpicks to open the cell.",
+        "returnable": 1,
+        "event": "ProcessLockpicking",
+        "experience": 50,
+        "interactive_object_name": "Lock",
+        "security_level": 15,
+        "success": "The character deftly examines the lock, swiftly inserting the lockpick into the mechanism. With practiced precision, they delicately manipulate the tumblers, listening for the subtle clicks. The tension wrench turns slowly, the satisfying sound of the lock releasing echoing faintly through the crypt-like chamber. The cage door swings open silently, granting the hero freedom.",
+        "none": "You don't have the necessary tools to attempt lockpicking.",
+        "fail": [
+          "The character, focusing intently, skillfully manipulates the lock's tumblers, aiming for success. However, an unexpected obstruction within the lock halts their progress. In a sudden twist, the lockpick snaps with a quiet but audible crack, the tension too much for the delicate tool to endure.",
+          "Despite the character's calculated movements, a misjudged twist of the lockpick within the mechanism causes an abrupt resistance. The lockpick splinters and breaks, a small shard falling to the floor with a faint clink, rendering the tool useless for any further attempts.",
+          "Despite the character's skillful maneuvering, a momentary lapse causes the lock pick to snap with a faint crackle. Part of the tool breaks off, but the lock remains intact. With the lock pick ruined, the character assesses the situation."
+        ]
+      }
+    ]
+  }
   ]

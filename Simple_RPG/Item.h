@@ -16,8 +16,14 @@ public:
 	Item();
 
 	std::string GetName();
+	void SetName(std::string new_name);
+
 	std::string GetDescription();
+	void SetDescription(std::string new_descr);
+
 	std::string GetEffect();
+	void SetEffect(std::string new_effect);
+
 
 	virtual ~Item();
 };

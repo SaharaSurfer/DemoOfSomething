@@ -1,0 +1,35 @@
+[
+  {
+    "choice_name": "Silent stare",
+    "hero_line": "The hero remains silent, observing the kidnapper expectantly.",
+    "npc_line": "Kidnapper: *With a scoff* Fine, if you won't talk, I will. You're here because we needed some leverage. Your guild meddles where it shouldn't. But you're just a pawn in something far bigger.",
+    "is_end": 1
+  },
+  {
+    "choice_name": "Inquire about goals",
+    "hero_line": "You: What do you want? Why am I here?",
+    "npc_line": "Kidnapper: *With cautious reluctance* You? You're here because we need leverage. Your guild pokes its nose into places it doesn't belong. But you're just a small piece in something much larger, something you wouldn't understand.",
+    "is_end": 0,
+    "options": 
+    [
+      {
+        "choice_name": "Insist on more information",
+        "hero_line": "You: Leverage for what? What is it that you're after?",
+        "npc_line": "Kidnapper: *Sighs, clearly against revealing too much* We've got our reasons, and you'll see it in due time. But for now, let's just say that your guild's actions have consequences, and you're a part of those consequences.",
+        "is_end": 0
+      },
+      {
+        "choice_name": "Mock the kidnapper",
+        "hero_line": "You: *With a mocking tone* Oh, how cryptic. You sound like you're part of some grand scheme, but I bet you're just a thug following orders.",
+        "npc_line": "Kidnapper: *Annoyed by the mockery* You're quite bold, aren't you? Just remember, bravado won't get you far in your current situation.",
+        "is_end": 1
+      }
+    ]
+  },
+  {
+    "choice_name": "Pretend to be unconscious",
+    "hero_line": "The hero feigns unconsciousness, hoping to eavesdrop on the kidnapper's conversation without revealing consciousness.",
+    "npc_line": "Kidnapper: *Mutters to themselves* Figures you'd pull something like this. No matter. You'll wake up eventually, and then we'll have a chat.",
+    "is_end": 1
+  }
+]

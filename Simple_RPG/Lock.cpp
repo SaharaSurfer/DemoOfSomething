@@ -14,3 +14,13 @@ void Lock::SetLockLevel(int level)
 		lock_level = level;
 	}
 }
+
+std::string Lock::GetKeyName()
+{
+	return key_name;
+}
+
+void Lock::SetKeyName(std::string k_name)
+{
+	key_name = k_name;
+}

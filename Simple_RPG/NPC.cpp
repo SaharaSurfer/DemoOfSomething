@@ -1,8 +1,8 @@
-#include "Player.h"
+#include "NPC.h"
 
-Player::Player() {}
+NPC::NPC() {}
 
-Player::Player(Race r, GameClass gc)
+NPC::NPC(Race r, GameClass gc, int lvl)
 {
 	race = r;
 	gameclass = gc;
@@ -22,7 +22,7 @@ Player::Player(Race r, GameClass gc)
 
 	Interface interface;
 	json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
-	for (size_t i = 0; i < list_of_abilities[gc.name].size() and i < level; i++)
+	for (size_t i = 0; i < list_of_abilities[gc.name].size() and i < lvl; i++)
 	{
 		for (json node : list_of_abilities[gc.name][i])
 		{
@@ -31,7 +31,22 @@ Player::Player(Race r, GameClass gc)
 	}
 }
 
-std::vector<Ability> Player::GetAbilities()
+bool NPC::IsDead()
+{
+	return health == 0;
+}
+
+std::string NPC::GetRaceName()
+{
+	return race.name;
+}
+
+std::string NPC::GetClassName()
+{
+	return gameclass.name;
+}
+
+std::vector<Ability> NPC::GetAbilities()
 {
 	return abilities;
 }

@@ -1,6 +1,7 @@
 [
   {
     "Drow": {
+      "name": "Drow",
       "charismaBonus": 1,
       "dexterityBonus": 2,
       "intelligenceBonus": 1,
@@ -8,6 +9,7 @@
       "wisdomBonus": 0
     },
     "Dwarf": {
+      "name": "Dwarf",
       "charismaBonus": 0,
       "dexterityBonus": 0,
       "intelligenceBonus": 0,
@@ -15,6 +17,7 @@
       "wisdomBonus": 1
     },
     "Elf": {
+      "name": "Elf",
       "charismaBonus": 0,
       "dexterityBonus": 2,
       "intelligenceBonus": 1,
@@ -22,6 +25,7 @@
       "wisdomBonus": 1
     },
     "Human": {
+      "name": "Human",
       "charismaBonus": 1,
       "dexterityBonus": 1,
       "intelligenceBonus": 1,
@@ -29,6 +33,7 @@
       "wisdomBonus": 1
     },
     "Orc": {
+      "name": "Orc",
       "charismaBonus": 0,
       "dexterityBonus": 0,
       "intelligenceBonus": 0,
@@ -36,6 +41,7 @@
       "wisdomBonus": 0
     },
     "Tiefling": {
+      "name": "Tiefling",
       "charismaBonus": 2,
       "dexterityBonus": 1,
       "intelligenceBonus": 2,

@@ -3,5 +3,10 @@
     "name": "Lockpick",
     "description": "1",
     "effect": "2"
+  },
+  "Key": {
+    "name": "Key",
+    "description": "1",
+    "effect": "2"
   }
 }

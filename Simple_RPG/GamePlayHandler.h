@@ -1,21 +1,21 @@
 #pragma once
 #include "Interface.h"
+#include "EventHandler.h"
 #include "Player.h"
+#include "NPC.h"
 #include "Lockpick.h"
+#include "Key.h"
 #include "Lock.h"
 
 class GamePlayHandler
 {
 private:
 	Interface interface;
+	EventHandler event_handler;
 	Player player;
 
 	Race ChoosingRace();
 	GameClass ChoosingClass();
-
-	int HandleEvent(json node);
-	int ReceiveItems(json node);
-	int ProcessLockpicking(json node);
 
 	void ProcessDecisionTree(json tree);
 public:

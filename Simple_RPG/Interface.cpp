@@ -52,29 +52,52 @@ void Interface::RenderLocation()
     {
         std::cout << framed_art[i];
     }
-    // Будет расширение
 }
 
 std::string Interface::LoadText(const std::string& LocationName)
 {
     std::ifstream file_in(LocationName.c_str());
     std::string str(std::istreambuf_iterator<char>{file_in}, {});
+    file_in.close();
     return str;
 }
 
 void Interface::RenderText(const std::string& Text)
 {
-    int pause = 0;
+    int pause = 0, pointer = 0, splitter = std::string::npos;
     for (int i = 0; i < Text.size(); i++)
     {
         //pause = Text[i] == '.' or Text[i] == '!' or Text[i] == '?'
-        //    ? 150 : (Text[i] == ' ' ? 70 : 20);
+        //   ? 150 : (Text[i] == ' ' ? 30 : 15);
+        std::this_thread::sleep_for(std::chrono::milliseconds(pause));
+
+        pointer++;
+        if (pointer % 80 == 0)
+        {
+            splitter = Text.find(' ', i);
+        }
+
+        if (splitter != std::string::npos and i == splitter)
+        {
+            std::cout << "\n";
+            pointer = 0;
+        }
+        else
+        {
         std::cout << Text[i];
+        }
+        
         if (Text[i] == '\n' and Text[i + 1] == '\n')
         {
+            splitter = std::string::npos;
+            pointer = 0;
             system("pause");
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(pause));
+        else if (Text[i] == '\n')
+        {
+            splitter = std::string::npos;
+            pointer = 0;
+        }
     }
 }
 

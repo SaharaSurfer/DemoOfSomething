@@ -4,13 +4,18 @@
 #include "GameClass.h"
 #include "Interface.h"
 
-class Player : public Character
+class NPC : public Character
 {
 private:
 
 public:
-	Player();
-	Player(Race r, GameClass gc);
+	NPC();
+	NPC(Race r, GameClass gc, int lvl);
+
+	bool IsDead();
+
+	std::string GetRaceName();
+	std::string GetClassName();
 
 	std::vector<Ability> GetAbilities();
 };
