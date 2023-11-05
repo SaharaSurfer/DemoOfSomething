@@ -1,21 +1,20 @@
 #include "Lockpick.h"
 
-Lockpick::Lockpick() 
+Lockpick::Lockpick() : Item(), generator(std::random_device{}())
 {
 	LoadData("Lockpick");
 }
-
+	
 bool Lockpick::UnlockObject(Lock& object, Player& player)
 {
-	std::srand(time(0));
-
-	int player_toss = rand() % 20 + 1 + player.GetStatBonus("DEX");
+	std::uniform_int_distribution<int> distribution(1, 20);
+	int player_toss = distribution(generator) + player.GetStatBonus("DEX");
 	
 	if (player_toss >= object.GetLockLevel())
 	{
 		object.SetLockLevel(0);
-		return 1;
+		return true;
 	}
 	
-	return 0;
+	return false;
 }

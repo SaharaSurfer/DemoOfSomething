@@ -10,7 +10,7 @@ private:
 
 public:
 	Player();
-	Player(Race r, GameClass gc);
+	Player(const Race& r, const GameClass& gc);
 
 	std::vector<Ability> GetAbilities();
 };

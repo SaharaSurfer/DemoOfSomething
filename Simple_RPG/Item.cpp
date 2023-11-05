@@ -1,6 +1,6 @@
 #include "Item.h"
 
-void Item::LoadData(std::string item_name)
+void Item::LoadData(const std::string& item_name)
 {
 	json items = interface.LoadJSON("JsonFiles\\Items.json");
 	name = items[item_name]["name"];
@@ -15,7 +15,7 @@ std::string Item::GetName()
 	return name;
 }
 
-void Item::SetName(std::string new_name)
+void Item::SetName(const std::string& new_name)
 {
 	name = new_name;
 }
@@ -25,7 +25,7 @@ std::string Item::GetDescription()
 	return description;
 }
 
-void Item::SetDescription(std::string new_descr)
+void Item::SetDescription(const std::string& new_descr)
 {
 	description = new_descr;
 }
@@ -35,7 +35,7 @@ std::string Item::GetEffect()
 	return effect;
 }
 
-void Item::SetEffect(std::string new_effect)
+void Item::SetEffect(const std::string& new_effect)
 {
 	effect = new_effect;
 }

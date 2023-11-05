@@ -29,4 +29,6 @@ public:
 	void RenderText(const std::string& Text);
 
 	json LoadJSON(const std::string& LocationName);
+
+	size_t CollectPlayerChoice(size_t upper_border);
 };

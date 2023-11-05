@@ -2,65 +2,80 @@
 
 GamePlayHandler::GamePlayHandler() {}
 
-Race GamePlayHandler::ChoosingRace()
+Race GamePlayHandler::ChoosingRace(const json& races)
 {
 	interface.RenderText("Choose your race: \n");
-	json races = interface.LoadJSON("JsonFiles\\Race.json");
 
 	int race_index = 0;
-	for (auto kv = races[0].begin(); kv != races[0].end(); kv++)
+	for (auto kv : races[0].items())
 	{
 		race_index++;
 		interface.RenderText(std::to_string(race_index) + ") " + kv.key() + ": ");
-		for (auto& pair : kv.value().items())
-		{
-			if (pair.value() != 0 and pair.key() != "name")
-			{
-				std::string value = std::to_string((int)pair.value());
-				std::string key = pair.key().substr(0, pair.key().find('B'));
-				interface.RenderText("+" + value + " " + key + "; ");
-			}
-		}
-		std::cout << "\n";
+		DisplayRaceBonuses(kv.value());
 	}
 
-	std::string player_race_choice;
-	std::getline(std::cin, player_race_choice);
+	std::string race_choice = std::to_string(interface.CollectPlayerChoice(races[0].size()) + 1);
+	return LoadRace(races, race_choice);
+}
 
+void GamePlayHandler::DisplayRaceBonuses(const json& race_details)
+{
+	for (auto& pair : race_details.items()) 
+	{
+		if (pair.value() != 0 and pair.key() != "name") 
+		{
+			std::string value = std::to_string((int)pair.value());
+			std::string key = pair.key().substr(0, pair.key().find('B'));
+			interface.RenderText("+" + value + " " + key + "; ");
+		}
+	}
+	std::cout << "\n";
+}
+
+Race GamePlayHandler::LoadRace(const json& races, const std::string& race_choice)
+{
 	Race race;
-	player_race_choice = races[1][player_race_choice.substr(0, 1)];
+	std::string player_race_choice = races[1][race_choice];
 	race.name = player_race_choice;
 	races[0][player_race_choice].get_to(race);
-
+	
 	return race;
 }
-GameClass GamePlayHandler::ChoosingClass()
+
+GameClass GamePlayHandler::ChoosingClass(const json& classes)
 {
 	interface.RenderText("Choose your class: \n");
-	json classes = interface.LoadJSON("JsonFiles\\Class.json");
 
 	int class_index = 0;
-	for (auto kv = classes[0].begin(); kv != classes[0].end(); kv++)
+	for (auto kv : classes[0].items())
 	{
 		class_index++;
 		interface.RenderText(std::to_string(class_index) + ") " + kv.key() + ": ");
-		for (auto& pair : kv.value().items())
-		{
-			if (pair.value() != 0 and pair.key() != "name")
-			{
-				std::string value = std::to_string((int)pair.value());
-				std::string key = pair.key().substr(0, pair.key().find('B'));
-				interface.RenderText("+" + value + " " + key + "; ");
-			}
-		}
-		std::cout << "\n";
+		DisplayClassBonuses(kv.value());
 	}
 
-	std::string player_class_choice;
-	std::getline(std::cin, player_class_choice);
+	std::string class_choice = std::to_string(interface.CollectPlayerChoice(classes[0].size()) + 1);
+	return LoadClass(classes, class_choice);
+}
 
+void GamePlayHandler::DisplayClassBonuses(const json& class_details)
+{
+	for (auto& pair : class_details.items()) 
+	{
+		if (pair.value() != 0 && pair.key() != "name") 
+		{
+			std::string value = std::to_string((int)pair.value());
+			std::string key = pair.key().substr(0, pair.key().find('B'));
+			interface.RenderText("+" + value + " " + key + "; ");
+		}
+	}
+	std::cout << "\n";
+}
+
+GameClass GamePlayHandler::LoadClass(const json& classes, const std::string& class_choice)
+{
 	GameClass game_class;
-	player_class_choice = classes[1][player_class_choice.substr(0, 1)];
+	std::string player_class_choice = classes[1][class_choice];
 	game_class.name = player_class_choice;
 	classes[0][player_class_choice].get_to(game_class);
 
@@ -69,25 +84,30 @@ GameClass GamePlayHandler::ChoosingClass()
 
 void GamePlayHandler::CreatePlayerCharacter()
 {
-	//Display the introductory text
-	std::string entry = interface.LoadText("Text\\Entry.txt");
-	interface.RenderText(entry);
-	system("pause");
-	system("cls");
+	DisplayIntroductoryText("Text\\Entry.txt");
+	DisplayCharacterCreationScreen("Locations\\banner.txt");
 
-	//Display the ASCII art for the character creation screen
-	std::string character_creation = "Locations\\banner.txt";
-	interface.LoadLocation(character_creation);
-	interface.RenderLocation();
-
-	// Creating a player character
-	Race race_choice = ChoosingRace();
-	GameClass class_choice = ChoosingClass();
+	Race race_choice = ChoosingRace(interface.LoadJSON("JsonFiles\\Race.json"));
+	GameClass class_choice = ChoosingClass(interface.LoadJSON("JsonFiles\\Class.json"));
 	player = Player(race_choice, class_choice);
 	system("cls");
 }
 
-void GamePlayHandler::ProcessDecisionTree(json tree)
+void GamePlayHandler::DisplayIntroductoryText(const std::string& filename)
+{
+	std::string entry = interface.LoadText(filename);
+	interface.RenderText(entry);
+	system("pause");
+	system("cls");
+}
+
+void GamePlayHandler::DisplayCharacterCreationScreen(const std::string& filename)
+{
+	interface.LoadLocation(filename);
+	interface.RenderLocation();
+}
+
+void GamePlayHandler::ProcessDecisionTree(const json& tree)
 {
 	std::vector<json> nodes_in_use;
 
@@ -98,21 +118,13 @@ void GamePlayHandler::ProcessDecisionTree(json tree)
 	}
 
 	//Starting to process the player's decisions
-	while (nodes_in_use.size() > 0)
+	while (!nodes_in_use.empty())
 	{
-		//Bringing up the possible player choices
-		for (int i = 0; i < nodes_in_use.size(); i++)
-		{
-			std::string text = std::to_string(i + 1) + ") " + std::string(nodes_in_use[i]["choice_name"]) + "\n";
-			interface.RenderText(text);
-		}
+		DisplayPlayerChoices(nodes_in_use);
 
 		//Getting the player's solution
-		std::string player_choice;
-		std::getline(std::cin, player_choice);
-		player_choice = player_choice.substr(0, 1);
-
-		json chosen_node = nodes_in_use[std::stoi(player_choice) - 1];
+		size_t player_choice = interface.CollectPlayerChoice(nodes_in_use.size());
+		json chosen_node = nodes_in_use[player_choice];
 		player.GainExp(chosen_node["experience"]);
 
 		/*If the player's choices led to a plot turning point/end game,
@@ -123,35 +135,53 @@ void GamePlayHandler::ProcessDecisionTree(json tree)
 		}
 
 		//If the player's choice caused an event to occur, we process it
-		if (chosen_node["event"] != "0")
-		{
-			int is_over = event_handler.HandleEvent(chosen_node, player);
-			if (is_over == 1) { break; }
-			else if (is_over == 2) { continue; }
-			
-			// 0 - ...
-			// 1 - break
-			// 2 - retry
-		}
-
-		if (chosen_node.contains("text"))
-		{
-			interface.RenderText(std::string(chosen_node["text"]) + "\n\n");
-		}
+		int event_flag = ProcessEventAndText(chosen_node);
+		if (event_flag == 1) { break; }
+		else if (event_flag == 2) { continue; }
 
 		//Removing already used branch
-		if (nodes_in_use.size() != 0)
+		if (!nodes_in_use.empty())
 		{
-			nodes_in_use.erase(nodes_in_use.begin() + std::stoi(player_choice) - 1);
+			nodes_in_use.erase(nodes_in_use.begin() + player_choice);
 		}
 		
 		//Recording new branches if any
-		if (chosen_node.contains("options"))
+		AddNewBranches(nodes_in_use, chosen_node);
+	}
+}
+
+void GamePlayHandler::DisplayPlayerChoices(const std::vector<json>& nodes_in_use)
+{
+	for (size_t i = 0; i < nodes_in_use.size(); i++)
+	{
+		std::string text = std::to_string(i + 1) + ") " + std::string(nodes_in_use[i]["choice_name"]) + "\n";
+		interface.RenderText(text);
+	}
+}
+
+int GamePlayHandler::ProcessEventAndText(const json& chosen_node)
+{
+	int event_flag = -1;
+	if (chosen_node["event"] != "0")
+	{
+		event_flag = event_handler.HandleEvent(chosen_node, player);
+	}
+
+	if (chosen_node.contains("text"))
+	{
+		interface.RenderText(std::string(chosen_node["text"]) + "\n\n");
+	}
+
+	return event_flag;
+}
+
+void GamePlayHandler::AddNewBranches(std::vector<json>& nodes_in_use, const json& chosen_node)
+{
+	if (chosen_node.contains("options"))
+	{
+		for (auto& node : chosen_node["options"])
 		{
-			for (auto& node : chosen_node["options"])
-			{
-				nodes_in_use.push_back(node);
-			}
+			nodes_in_use.push_back(node);
 		}
 	}
 }

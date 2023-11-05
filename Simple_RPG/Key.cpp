@@ -10,11 +10,11 @@ bool Key::UnlockObject(Lock& object)
 	if (object.GetKeyName() == name)
 	{
 		object.SetLockLevel(0);
-		return 1;
+		return true;
 	}
 	else
 	{
 		interface.RenderText("<This key doesn't fit!>");
-		return 0;
+		return false;
 	}
 }

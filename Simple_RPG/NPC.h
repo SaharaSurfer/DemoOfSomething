@@ -10,7 +10,7 @@ private:
 
 public:
 	NPC();
-	NPC(Race r, GameClass gc, int lvl);
+	NPC(const Race& r, const GameClass& gc, int lvl);
 
 	bool IsDead();
 

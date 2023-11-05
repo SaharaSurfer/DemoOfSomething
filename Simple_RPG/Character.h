@@ -23,18 +23,23 @@ protected:
 	int strength = 10, dexterity = 10;
 	int intelligence = 10, wisdom = 10, charisma = 10;
 
-	std::vector<Item*> equipment;
-	std::vector<Item*> inventory;
+	std::vector<std::shared_ptr<Item>> equipment;
+	std::vector<std::shared_ptr<Item>> inventory;
+	static const int max_inventory_size = 10;
 	std::vector<Ability> abilities;
 
 public:
 	std::vector<std::pair<std::string, std::pair<int, int>>> positive_effects, negative_effects;
 
 	Character();
-	Character(Race r, GameClass gc);
+	Character(const Race& r, const GameClass& gc);
 
+	void LoadAbilitiesFromJSON();
+
+	std::string GetRaceName();
+	std::string GetClassName();
 	std::string GetName();
-	void SetName(std::string new_name);
+	void SetName(const std::string& new_name);
 
 	void GainExp(int exp);
 
@@ -54,8 +59,8 @@ public:
 	std::string GetCharacterStats();
 	std::string GetInventoryStats();
 
-	void AddItemToInventory(Item* object);
-	void DeleteItemFromInventory(std::string name);
-	Item* GetItemFromInventory(std::string name);
-	int CountItemInInventory(std::string name);
+	void AddItemToInventory(std::shared_ptr<Item> item);
+	void DeleteItemFromInventory(const std::string& itemName);
+	std::shared_ptr<Item> GetItemFromInventory(const std::string& itemName);
+	int CountItemInInventory(const std::string& itemName);
 };

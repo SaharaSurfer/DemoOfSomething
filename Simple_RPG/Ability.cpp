@@ -7,34 +7,63 @@ Ability::Ability(json info)
 	name = info["name"];
 	description = info["description"];
 
-	if (info.contains("mana_cost")) { resource = "mana"; resource_cost = info["mana_cost"]; }
-	if (info.contains("energy_cost")) { resource = "energy", resource_cost = info["energy_cost"]; }
-	if (info.contains("damage")) { damage = info["damage"]; }
-	if (info.contains("health")) { health = info["health"]; }
-	if (info.contains("mana")) { mana = info["mana"]; }
-	if (info.contains("periodic_damage")) { periodic_damage = info["periodic_damage"]; }
-	if (info.contains("damage_boost")) { damage_boost = info["damage_boost"]; }
-	if (info.contains("defense_boost")) { defense_boost = info["defense_boost"]; }
-	if (info.contains("turns")) { turns = info["turns"]; }
-	if (info.contains("enemy")) { enemy = info["enemy"]; }
+	ParseAbilityDetails(info);
+}
+
+void Ability::AssignValue(const std::string& key, int& value, const json& info) 
+{
+	if (info.contains(key)) 
+	{
+		value = info[key];
+	}
+}
+
+void Ability::AssignValue(const std::string& key, const std::string& res, int& res_cost, const json& info) 
+{
+	if (info.contains(key)) 
+	{
+		resource = res;
+		res_cost = info[key];
+	}
+}
+
+void Ability::ParseAbilityDetails(const json& info) {
+	AssignValue("mana_cost", "mana", resource_cost, info);
+	AssignValue("energy_cost", "energy", resource_cost, info);
+	AssignValue("damage", damage, info);
+	AssignValue("health", health, info);
+	AssignValue("mana", mana, info);
+	AssignValue("periodic_damage", periodic_damage, info);
+	AssignValue("damage_boost", damage_boost, info);
+	AssignValue("defense_boost", defense_boost, info);
+	AssignValue("turns", turns, info);
+	AssignValue("enemy", enemy, info);
+}
+
+void Ability::AddAbilityDetail(std::string& text, const std::string& action, int value, const std::string& attribute) 
+{
+	if (value != 0) 
+	{
+		text += action + " " + std::to_string(value) + attribute + "\n";
+	}
 }
 
 void Ability::ShowInfo()
 {
 	std::string text = name + " (" + description + ")\n";
-	if (resource != "") 
+	if (!resource.empty()) 
 	{
-		text += "costs " + std::to_string(resource_cost) + " " + resource + "\n";
+		text += "Costs " + std::to_string(resource_cost) + " " + resource + "\n";
 	}
 
-	if (damage != 0) { text += "deals " + std::to_string(damage) + " damage\n"; }
-	if (health != 0) { text += "restores " + std::to_string(health) + " health\n"; }
-	if (mana != 0) { text += "restores " + std::to_string(mana) + " mana\n"; }
-	if (periodic_damage != 0) { text += "deals " + std::to_string(periodic_damage) + " periodic damage\n"; }
-	if (damage_boost != 0) { text += "Increases damage by " + std::to_string(damage_boost) + "%\n"; }
-	if (defense_boost != 0) { text += "Increases defense by " + std::to_string(defense_boost) + "%\n"; }
-	if (turns != 0) { text += "Lasts " + std::to_string(turns) + " turns\n"; }
-	if (enemy != 0) { text += "Affects to " + std::to_string(enemy) + " enemies\n"; }
+	AddAbilityDetail(text, "Deals", damage, " damage");
+	AddAbilityDetail(text, "Restores", health, " health");
+	AddAbilityDetail(text, "Restores", mana, " mana");
+	AddAbilityDetail(text, "Deals", periodic_damage, " periodic damage");
+	AddAbilityDetail(text, "Increases damage by", damage_boost, "%");
+	AddAbilityDetail(text, "Increases defense by", defense_boost, "%");
+	AddAbilityDetail(text, "Lasts", turns, " turns");
+	AddAbilityDetail(text, "Affects to", enemy, " enemies");
 
 	std::cout << text << "\n";
 }

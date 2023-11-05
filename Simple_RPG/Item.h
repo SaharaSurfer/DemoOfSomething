@@ -7,23 +7,22 @@ class Item
 protected:
 	Interface interface;
 
-	std::string name;
-	std::string description;
-	std::string effect;
+	std::string name = "";
+	std::string description = "";
+	std::string effect = "";
 
-	void LoadData(std::string item_name);
+	void LoadData(const std::string& item_name);
 public:
 	Item();
 
 	std::string GetName();
-	void SetName(std::string new_name);
+	void SetName(const std::string& new_name);
 
 	std::string GetDescription();
-	void SetDescription(std::string new_descr);
+	void SetDescription(const std::string& new_descr);
 
 	std::string GetEffect();
-	void SetEffect(std::string new_effect);
-
+	void SetEffect(const std::string& new_effect);
 
 	virtual ~Item();
 };

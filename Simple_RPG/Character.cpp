@@ -2,11 +2,8 @@
 
 Character::Character() {}
 
-Character::Character(Race r, GameClass gc)
+Character::Character(const Race& r, const GameClass& gc) : race(r), gameclass(gc)
 {
-	race = r;
-	gameclass = gc;
-
 	strength += r.strengthBonus;
 	dexterity += r.dexterityBonus;
 	intelligence += r.intelligenceBonus;
@@ -19,15 +16,31 @@ Character::Character(Race r, GameClass gc)
 	defense += gc.defenseBonus * level;
 	attack += gc.attackBonus * level;
 
+	LoadAbilitiesFromJSON();
+}
+
+void Character::LoadAbilitiesFromJSON()
+{
 	Interface interface;
-	json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
-	for (size_t i = 0; i < list_of_abilities[gc.name].size() and i < level; i++)
+	const json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
+
+	for (size_t i = 0; i < list_of_abilities[gameclass.name].size() and i < level; i++)
 	{
-		for (json node : list_of_abilities[gc.name][i])
+		for (const auto& node : list_of_abilities[gameclass.name][i])
 		{
 			abilities.push_back(Ability(node));
 		}
 	}
+}
+
+std::string Character::GetRaceName()
+{
+	return race.name;
+}
+
+std::string Character::GetClassName()
+{
+	return gameclass.name;
 }
 
 std::string Character::GetName()
@@ -35,14 +48,14 @@ std::string Character::GetName()
 	return name;
 }
 
-void Character::SetName(std::string new_name)
+void Character::SetName(const std::string& new_name)
 {
 	name = new_name;
 }
 
 void Character::GainExp(int exp)
 {
-	std::map<int, int> exp_progression =
+	static std::map<int, int> exp_progression =
 	{
 		{1, 250}, {2, 300}, {3, 500}
 	};
@@ -55,8 +68,8 @@ void Character::GainExp(int exp)
 		level++;
 
 		Interface interface;
-		json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
-		for (json node : list_of_abilities[gameclass.name][level - 1])
+		const json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
+		for (const auto& node : list_of_abilities[gameclass.name][level - 1])
 		{
 			abilities.push_back(Ability(node));
 		}
@@ -183,38 +196,38 @@ std::string Character::GetCharacterStats()
 std::string Character::GetInventoryStats()
 {
 	std::string text = "";
-	for (int i = 0; i < inventory.size(); i++)
+	for (const auto& item : inventory)
 	{
-		text += inventory[i] -> GetName() + ", ";
+		text += item -> GetName() + ", ";
 	}
 	return text;
 }
 
-void Character::AddItemToInventory(Item* object)
+void Character::AddItemToInventory(std::shared_ptr<Item> item)
 {
-	if (inventory.size() < 20) 
+	if (inventory.size() < max_inventory_size) 
 	{
-		inventory.push_back(object);
+		inventory.push_back(std::move(item));
 	}
 }
 
-void Character::DeleteItemFromInventory(std::string name)
+void Character::DeleteItemFromInventory(const std::string& itemName)
 {
-	for (int i = 0; i < inventory.size(); i++)
+	for (auto it = inventory.begin(); it != inventory.end(); it++)
 	{
-		if (inventory[i] -> GetName() == name)
+		if ((*it)->GetName() == itemName)
 		{
-			inventory.erase(inventory.begin() + i);
+			inventory.erase(it);
 			break;
 		}
 	}
 }
 
-Item* Character::GetItemFromInventory(std::string name) 
+std::shared_ptr<Item> Character::GetItemFromInventory(const std::string& itemName) 
 {
-	for (Item* item : inventory)
+	for (auto& item : inventory)
 	{
-		if (item -> GetName() == name)
+		if (item -> GetName() == itemName)
 		{
 			return item;
 		}
@@ -223,15 +236,10 @@ Item* Character::GetItemFromInventory(std::string name)
 	return nullptr;
 }
 
-int Character::CountItemInInventory(std::string name)
+int Character::CountItemInInventory(const std::string& itemName)
 {
-	int cnt = 0;
-	for (Item* item : inventory)
-	{
-		if (item -> GetName() == name)
-		{
-			cnt++;
-		}
-	}
-	return cnt;
+	return static_cast<int>
+		(std::count_if(inventory.begin(), inventory.end(),
+		[&itemName](const std::shared_ptr<Item>& item) 
+		{ return item->GetName() == itemName; }));
 }

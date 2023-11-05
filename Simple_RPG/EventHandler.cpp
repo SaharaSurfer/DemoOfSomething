@@ -2,52 +2,46 @@
 
 int EventHandler::HandleEvent(json node, Player& player)
 {
-	std::string event_type = node["event"];
+	static const std::unordered_map<std::string, std::function<int(EventHandler&, json, Player&)>> eventHandlers = 
+	{
+		{"ReceiveItems", &EventHandler::ReceiveItems},
+		{"ProcessLockpicking", &EventHandler::ProcessLockpicking},
+		{"UseKeyToOpen", &EventHandler::UseKeyToOpen},
+		{"ProcessDialog", &EventHandler::ProcessDialog},
+		{"ProcessSurpriseAttack", &EventHandler::ProcessSurpriseAttack},
+		{"ProcessFight", &EventHandler::ProcessFight}
+	};
 
-	int is_over = 0;
-	if (event_type == "ReceiveItems")
-	{
-		is_over = ReceiveItems(node, player);
+	const std::string event_type = node["event"];
+	if (eventHandlers.find(event_type) != eventHandlers.end()) {
+		return eventHandlers.at(event_type)(*this, node, player);
 	}
-	else if (event_type == "ProcessLockpicking")
-	{
-		is_over = ProcessLockpicking(node, player);
-	}
-	else if (event_type == "UseKeyToOpen")
-	{
-		is_over = UseKeyToOpen(node, player);
-	}
-	else if (event_type == "ProcessDialog")
-	{
-		is_over = ProcessDialog(node);
-	}
-	else if (event_type == "ProcessSurpriseAttack")
-	{
-		is_over = ProcessSurpriseAttack(node, player);
-	}
-	else if (event_type == "ProcessFight")
-	{
-		is_over = ProcessFight(node, player);
-	}
-
-	return is_over;
+	
+	return 0;
 }
 
 int EventHandler::ReceiveItems(json node, Player& player)
 {
-	for (int i = 0; i < node["number_of_items"]; i++)
+	static const std::unordered_map<std::string, std::function<std::shared_ptr<Item>()>> item_сreators = 
 	{
-		Item* item = new Item;
-		if (node["item_name"] == std::string("Lockpick"))
+		{"Lockpick", []() { return std::make_shared<Lockpick>(); }},
+		{"Key", []() { return std::make_shared<Key>(); }},
+	};
+
+	for (int i = 0; i < node["number_of_items"]; i++) 
+	{
+		std::string item_name = std::string(node["item_name"]);
+		auto item_creator = item_сreators.find(item_name);
+		if (item_creator != item_сreators.end()) 
 		{
-			item = new Lockpick();
+			std::shared_ptr<Item> item = item_creator -> second();
+			if (item_name == "Key") 
+			{
+				auto key = std::dynamic_pointer_cast<Key>(item);
+				key -> SetName(std::string(node["key_name"]));
+			}
+			player.AddItemToInventory(std::move(item));
 		}
-		else if (node["item_name"] == std::string("Key"))
-		{
-			item = new Key();
-			item->SetName(std::string(node["key_name"]));
-		}
-		player.AddItemToInventory(item);
 	}
 
 	return 0;
@@ -55,7 +49,10 @@ int EventHandler::ReceiveItems(json node, Player& player)
 
 int EventHandler::ProcessLockpicking(json node, Player& player)
 {
-	srand(time(0));
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> distribution(0, 2);
+
 	json failure_text = node["fail"];
 
 	if (node["interactive_object_name"] == "Lock")
@@ -63,19 +60,19 @@ int EventHandler::ProcessLockpicking(json node, Player& player)
 		Lock lock = Lock();
 		lock.SetLockLevel(node["security_level"]);
 
-		while (player.GetInventoryStats().find("Lockpick") != std::string::npos)
+		while (player.CountItemInInventory("Lockpick") > 0)
 		{
-			Item* item = player.GetItemFromInventory("Lockpick");
-			Lockpick* lockpick = dynamic_cast<Lockpick*>(item);
+			std::shared_ptr<Item> item = player.GetItemFromInventory("Lockpick");
+			std::shared_ptr<Lockpick> lockpick = std::dynamic_pointer_cast<Lockpick>(item);
 
-			bool is_open = lockpick->UnlockObject(lock, player);
+			bool is_open = lockpick -> UnlockObject(lock, player);
 			if (is_open)
 			{
 				interface.RenderText(std::string(node["success"]) + "\n");
 				return 1;
 			}
 
-			interface.RenderText(std::string(failure_text[rand() % 3]) + "\n");
+			interface.RenderText(std::string(failure_text[distribution(gen)]) + "\n");
 			player.DeleteItemFromInventory("Lockpick");
 
 			int lockpick_num = player.CountItemInInventory("Lockpick");
@@ -86,7 +83,6 @@ int EventHandler::ProcessLockpicking(json node, Player& player)
 			interface.RenderText(text);
 
 			if (lockpick_num == 0) { return 0; }
-
 			return 2;
 		}
 	}
@@ -98,14 +94,12 @@ int EventHandler::UseKeyToOpen(json node, Player& player)
 {
 	if (node["interactive_object_name"] == "Lock")
 	{
-		// Можно передавать замок, а не создавать его здесь
 		Lock lock = Lock();
 		lock.SetKeyName(std::string(node["key_needed"]));
 
-		Item* item = player.GetItemFromInventory(std::string(node["key_needed"]));
-		if (item != nullptr)
+		std::shared_ptr<Item> item = player.GetItemFromInventory(std::string(node["key_needed"]));
+		if (auto key = std::dynamic_pointer_cast<Key>(item))
 		{
-			Key* key = dynamic_cast<Key*>(item);
 			key -> UnlockObject(lock);
 			interface.RenderText(std::string(node["success"]));
 		}
@@ -119,55 +113,58 @@ int EventHandler::UseKeyToOpen(json node, Player& player)
 	return 0;
 }
 
-int EventHandler::ProcessDialog(json node)
+int EventHandler::ProcessDialog(json node, Player& player)
 {
 	json dialog = interface.LoadJSON(std::string(node["dialog_name"]));
 
-	std::vector<json> current_options;
+	std::deque<json> current_options;
 
 	//Filling in initial options
-	for (auto& option : dialog)
+	for (const auto& option : dialog)
 	{
 		current_options.push_back(option);
 	}
 
-	while (current_options.size() > 0)
+	while (!current_options.empty())
 	{
 		//Bringing up the possible player choices
-		for (int i = 0; i < current_options.size(); i++)
+		for (size_t i = 0; i < current_options.size(); i++)
 		{
 			std::string text = std::to_string(i + 1) + ") " + std::string(current_options[i]["choice_name"]) + "\n";
 			interface.RenderText(text);
 		}
 
 		//Getting the player's solution
-		std::string player_choice;
-		std::getline(std::cin, player_choice);
-		player_choice = player_choice.substr(0, 1);
-
-		json chosen_node = current_options[std::stoi(player_choice) - 1];
-
-		interface.RenderText(std::string(chosen_node["hero_line"]) + "\n");
-		interface.RenderText(std::string(chosen_node["npc_line"]) + "\n");
-
-		if (chosen_node["is_end"] == 1)
+		size_t choice = interface.CollectPlayerChoice(current_options.size());
+		if (choice < current_options.size())
 		{
-			current_options.clear();
-		}
+			const json& chosen_node = current_options[choice];
+			interface.RenderText(std::string(chosen_node["hero_line"]) + "\n");
+			interface.RenderText(std::string(chosen_node["npc_line"]) + "\n");
 
-		//Removing already used branch
-		if (current_options.size() > 0)
-		{
-			current_options.erase(current_options.begin() + std::stoi(player_choice) - 1);
-		}
-
-		//Recording new branches if any
-		if (chosen_node.contains("options"))
-		{
-			for (auto& node : chosen_node["options"])
+			if (chosen_node["is_end"] == 1)
 			{
-				current_options.push_back(node);
+				current_options.clear();
 			}
+
+			//Removing already used branch
+			if (!current_options.empty())
+			{
+				current_options.erase(current_options.begin() + choice - 1);
+			}
+
+			//Recording new branches if any
+			if (chosen_node.contains("options"))
+			{
+				for (const auto& node : chosen_node["options"])
+				{
+					current_options.push_back(node);
+				}
+			}
+		}
+		else
+		{
+			interface.RenderText("Invalid choice. Please try again.\n");
 		}
 	}
 
@@ -176,9 +173,11 @@ int EventHandler::ProcessDialog(json node)
 
 int EventHandler::ProcessSurpriseAttack(json node, Player& player)
 {
-	srand(time(0));
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> distribution(1, 20);
 
-	if (rand() % 20 + 1 + player.GetStatBonus(node["stat_check"]) < node["complexity"])
+	if (distribution(gen) + player.GetStatBonus(node["stat_check"]) < node["complexity"])
 	{
 		interface.RenderText(node["fail"]);
 		return 1;
@@ -194,25 +193,18 @@ int EventHandler::ProcessFight(json node, Player& player)
 {
 	std::vector<NPC> enemies = CreateNPCs(node);
 
-	srand(time(0));
-	int player_initiative = rand() % 20 + 1;
-	
-	std::vector<int> enemy_initiatives;
-	for (size_t i = 0; i < enemies.size(); i++)
-	{
-		int enemy_initiative = rand() % 20 + 1;
-		enemy_initiatives.push_back(enemy_initiative);
-	}
+	int player_initiative = GenerateInitiative();
+	std::vector<int> enemy_initiatives = GenerateEnemyInitiative(enemies);
 	
 	std::vector<int> all_initiatives = enemy_initiatives;
 	all_initiatives.push_back(player_initiative);
 	std::sort(all_initiatives.rbegin(), all_initiatives.rend());
 
-	while (std::any_of(enemies.cbegin(), enemies.cend(), [](NPC npc) { return !npc.IsDead(); }))
+	while (AreAnyEnemyAlive(enemies))
 	{
-		for (int init_ind = 0; init_ind < all_initiatives.size(); init_ind++)
+		for (int initiative: all_initiatives)
 		{
-			if (all_initiatives[init_ind] == player_initiative)
+			if (initiative == player_initiative)
 			{
 				OutputCurrentFightState(player, enemies);
 				PlayerTurn(player, enemies);
@@ -220,7 +212,7 @@ int EventHandler::ProcessFight(json node, Player& player)
 			else
 			{
 				int enemy_ind = std::find(enemy_initiatives.rbegin(), enemy_initiatives.rend(), 
-					all_initiatives[init_ind]) - enemy_initiatives.rbegin();
+					initiative) - enemy_initiatives.rbegin();
 				if (enemies[enemy_ind].IsDead()) { continue; }
 				NPCTurn(player, enemies[enemy_ind]);
 			}
@@ -239,10 +231,13 @@ std::vector<NPC> EventHandler::CreateNPCs(json node)
 	for (int i = 0; i < node["num_of_enemy"]; i++)
 	{
 		GameClass gc;
-		classes[0][std::string(node["classes_of_enemy"][i])].get_to(gc);
-
 		Race r;
-		races[0][std::string(node["races_of_enemy"][i])].get_to(r);
+
+		std::string enemy_class = std::string(node["classes_of_enemy"][i]);
+		std::string enemy_race = std::string(node["races_of_enemy"][i]);
+
+		classes[0][enemy_class].get_to(gc);
+		races[0][enemy_race].get_to(r);
 
 		NPC enemy = NPC(r, gc, node["levels"][i]);
 		enemies.push_back(enemy);
@@ -251,74 +246,90 @@ std::vector<NPC> EventHandler::CreateNPCs(json node)
 	return enemies;
 }
 
-void EventHandler::OutputCurrentFightState(Player& player, std::vector<NPC> enemies)
+int EventHandler::GenerateInitiative()
 {
-	std::cout << std::string(50, '-') << std::endl;
-	std::cout << "Player Turn\n";
-	std::cout << std::string(50, '-') << std::endl;
-	int num_of_pallets = (player.GetHealthPercent() + 4) / 10;
-	std::cout << "Player Health: " << 
-		std::string(num_of_pallets, '#') + std::string(10 - num_of_pallets, '*') + " "
-		<< player.GetHealth() << "/" << player.GetMaxHealth() 
-		<< " " << player.GetMana() << " mana " << player.GetEnergy() << " energy\n";
-	std::cout << std::string(50, '-') << std::endl;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> distribution(1, 20);
+	return distribution(gen);
+}
+
+std::vector<int> EventHandler::GenerateEnemyInitiative(const std::vector<NPC>& enemies)
+{
+	std::vector<int> enemy_initiatives;
 
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		int num_of_pallets = (enemies[i].GetHealthPercent() + 4) / 10;
-		std::cout << i + 1 << ") " << enemies[i].GetName() 
-			<< "(" << enemies[i].GetRaceName() << " " << enemies[i].GetClassName() << ")" 
-			<< ": " << std::string(num_of_pallets, '#') + std::string(10 - num_of_pallets, '*') + " "
-			<< enemies[i].GetHealth() << "/" << enemies[i].GetMaxHealth() 
-			<< " " << enemies[i].GetMana() << " mana " << enemies[i].GetEnergy() << " energy\n";
+		enemy_initiatives.push_back(GenerateInitiative());
 	}
 
-	std::cout << std::string(50, '-') << std::endl;
+	return enemy_initiatives;
+}
+
+bool EventHandler::AreAnyEnemyAlive(const std::vector<NPC>& enemies)
+{
+	return std::any_of(enemies.cbegin(), enemies.cend(), [](NPC npc) { return !npc.IsDead(); });
+}
+
+int EventHandler::GetEnemyIndexByInitiative(const std::vector<int>& enemy_initiatives, int initiative)
+{
+	auto it = std::find(enemy_initiatives.begin(), enemy_initiatives.end(), initiative);
+	if (it != enemy_initiatives.end()) 
+	{
+		return std::distance(enemy_initiatives.begin(), it);
+	}
+}
+
+void EventHandler::OutputCurrentFightState(Player& player, std::vector<NPC> enemies)
+{
+	const int health_pallets = 10;
+	const int health_percent_padding = 4;
+	const std::string separator_line = std::string(50, '-');
+
+	std::cout << separator_line << "\n";
+	std::cout << "Player Turn\n";
+	std::cout << separator_line << "\n";
+	
+	auto PrintHealthInfo = [](Character& character) {
+		int numPallets = (character.GetHealthPercent() + health_percent_padding) / health_pallets;
+		std::string healthBar = std::string(numPallets, '#') +
+			std::string(health_pallets - numPallets, '*');
+		std::cout << character.GetName() << "(" << character.GetRaceName() << " " << character.GetClassName() << ")"
+			<< ": " << healthBar << " " << character.GetHealth() << "/" << character.GetMaxHealth()
+			<< " " << character.GetMana() << " mana " << character.GetEnergy() << " energy\n";
+		};
+
+	PrintHealthInfo(player);
+	std::cout << separator_line << "\n";
+
+	for (size_t i = 0; i < enemies.size(); i++)
+	{
+		PrintHealthInfo(enemies[i]);
+	}
+
+	std::cout << separator_line << "\n";
 }
 
 void EventHandler::PlayerTurn(Player& player, std::vector<NPC>& enemies)
 {
-	for (std::pair<std::string, std::pair<int, int>> effect : player.positive_effects)
-	{
-		if (effect.second.second > 0) { effect.second.second -= 1; }
-	}
-
-	for (std::pair<std::string, std::pair<int, int>> effect : player.negative_effects)
-	{
-		if (effect.first == "periodic_damage" and effect.second.second > 0)
-		{
-			player.IncreaseHealth(-effect.second.first);
-			effect.second.second -= 1;
-		}
-	}
+	HandleEffects(player, player.positive_effects);
+	HandleEffects(player, player.negative_effects);
 
 	std::cout << "1) Attack with weapon in hand\n";
 	std::cout << "2) Use ability\n";
 	std::cout << "3) Use item\n";
 	std::cout << "Enter your choice: ";
 
-	std::string player_choice;
-	std::getline(std::cin, player_choice);
-	player_choice = player_choice.substr(0, 1);
-
-	if (player_choice == "1")
+	size_t player_choice = interface.CollectPlayerChoice(3);
+	if (player_choice == 0)
 	{
 		std::cout << "Enter target: ";
-		std::string target_choice;
-		std::getline(std::cin, target_choice);
-		target_choice = target_choice.substr(0, 1);
+		size_t target_choice = interface.CollectPlayerChoice(enemies.size());
 
-		float damage = player.GetAttack();
-		for (std::pair<std::string, std::pair<int, int>> effect : player.positive_effects)
-		{
-			if (effect.first == "damage_boost" and effect.second.second > 0)
-			{
-				damage *= (1 + effect.second.first / 100);
-			}
-		}
-		enemies[std::stoi(target_choice) - 1].IncreaseHealth(-(int)damage);
+		float damage = CalculateBoostedDamage(player.GetAttack(), player.positive_effects);
+		enemies[target_choice].IncreaseHealth(-static_cast<int>(damage));
 	}
-	else if (player_choice == "2")
+	else if (player_choice == 1)
 	{
 		int ability_ind = 0;
 		for (Ability ability : player.GetAbilities())
@@ -330,35 +341,22 @@ void EventHandler::PlayerTurn(Player& player, std::vector<NPC>& enemies)
 		}
 
 		std::cout << "Enter ability choice: ";
-		std::string ability_choice;
-		std::getline(std::cin, ability_choice);
-		ability_choice = ability_choice.substr(0, 1);
+		size_t ability_choice = interface.CollectPlayerChoice(player.GetAbilities().size());
+		Ability chosen_ability = player.GetAbilities()[ability_choice];
 
-		Ability chosen_ability = player.GetAbilities()[std::stoi(ability_choice) - 1];
 		if (chosen_ability.resource == "mana") { player.IncreaseMana(-chosen_ability.resource_cost); }
 		if (chosen_ability.resource == "energy") { player.IncreaseEnergy(-chosen_ability.resource_cost); }
 		if (chosen_ability.damage != 0)
 		{
 			std::cout << "Enter target: ";
-			std::string target_choice;
-			std::getline(std::cin, target_choice);
-			target_choice = target_choice.substr(0, 1);
+			size_t target_choice = interface.CollectPlayerChoice(enemies.size());
 
-			float damage = chosen_ability.damage;
-			for (std::pair<std::string, std::pair<int, int>> effect : player.positive_effects)
-			{
-				if (effect.first == "damage_boost" and effect.second.second > 0)
-				{
-					damage *= (1 + effect.second.first / 100);
-				}
-			}
-
-			enemies[std::stoi(target_choice) - 1].IncreaseHealth(-(int)damage);
+			float damage = CalculateBoostedDamage(chosen_ability.damage, player.positive_effects);
+			enemies[target_choice].IncreaseHealth(-static_cast<int>(damage));
 
 			if (chosen_ability.periodic_damage != 0)
 			{
-				enemies[std::stoi(target_choice) - 1].negative_effects.push_back(
-					std::pair<std::string, std::pair<int, int>>("periodic_damage", std::pair<int, int>(chosen_ability.periodic_damage, chosen_ability.turns)));
+				enemies[target_choice].negative_effects.emplace_back("periodic_damage", std::make_pair(chosen_ability.periodic_damage, chosen_ability.turns));
 			}
 			
 			if (chosen_ability.enemy != 0)
@@ -367,8 +365,8 @@ void EventHandler::PlayerTurn(Player& player, std::vector<NPC>& enemies)
 				while (damaged_enemies < (chosen_ability.enemy - 1) and (enemy_ind + 1) < enemies.size())
 				{
 					enemy_ind++;
-					if (enemy_ind == std::stoi(target_choice) - 1) { continue; }
-					enemies[enemy_ind].IncreaseHealth(-(int)damage);
+					if (enemy_ind == target_choice) { continue; }
+					enemies[enemy_ind].IncreaseHealth(-static_cast<int>(damage));
 					damaged_enemies++;
 				}
 			}
@@ -377,17 +375,15 @@ void EventHandler::PlayerTurn(Player& player, std::vector<NPC>& enemies)
 		if (chosen_ability.health != 0) { player.IncreaseHealth(chosen_ability.health); }
 		if (chosen_ability.damage_boost != 0)
 		{
-			player.positive_effects.push_back(
-				std::pair<std::string, std::pair<int, int>>("damage_boost", std::pair<int, int>(chosen_ability.damage_boost, chosen_ability.turns)));
+			player.positive_effects.emplace_back("damage_boost", std::make_pair(chosen_ability.damage_boost, chosen_ability.turns));
 		}
 		if (chosen_ability.defense_boost != 0) 
 		{
-			player.positive_effects.push_back(
-				std::pair<std::string, std::pair<int, int>>("defense_boost", std::pair<int, int>(chosen_ability.defense_boost, chosen_ability.turns)));
+			player.positive_effects.emplace_back("defense_boost", std::make_pair(chosen_ability.damage_boost, chosen_ability.turns));
 		}
 
 	}
-	else if (player_choice == "3")
+	else if (player_choice == 2)
 	{
 		//Проверка на присутствие итемов, которые можно использовать --> вывод текста/действие
 	}
@@ -395,55 +391,31 @@ void EventHandler::PlayerTurn(Player& player, std::vector<NPC>& enemies)
 
 void EventHandler::NPCTurn(Player& player, NPC& npc)
 {
-	for (std::pair<std::string, std::pair<int, int>> effect : npc.positive_effects)
-	{
-		if (effect.second.second > 0) { effect.second.second -= 1; }
-	}
+	HandleEffects(npc, npc.positive_effects);
+	HandleEffects(npc, npc.negative_effects);
 
-	for (std::pair<std::string, std::pair<int, int>> effect : npc.negative_effects)
-	{
-		if (effect.second.second != 0)
-		{
-			if (effect.first == "periodic_damage" and effect.second.second > 0)
-			{
-				npc.IncreaseHealth(-effect.second.first);
-				effect.second.second -= 1;
-			}
-		}
-	}
-
-	srand(time(NULL));
-	int activity_choice = rand() % 2;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> activityDistribution(0, 1);
+	int activity_choice = activityDistribution(gen);
 	if (activity_choice == 0)
 	{
-		float damage = npc.GetAttack();
-		for (std::pair<std::string, std::pair<int, int>> effect : npc.positive_effects)
-		{
-			if (effect.first == "damage_boost" and effect.second.second > 0)
-			{
-				damage *= (1 + effect.second.first / 100);
-			}
-		}
-		player.IncreaseHealth(-(int)damage);
+		float damage = CalculateBoostedDamage(npc.GetAttack(), npc.positive_effects);
+		player.IncreaseHealth(-static_cast<int>(damage));
 		return;
 	}
 
-	bool spell_chosen = false;
+	std::uniform_int_distribution<int> abilityDistribution(0, static_cast<int>(npc.GetAbilities().size()) - 1);
 	Ability chosen_ability;
+	bool spell_chosen = false;
 	while (!spell_chosen)
 	{
-		std::cout << npc.GetAbilities().size() << std::endl;
-		chosen_ability = npc.GetAbilities()[rand() % npc.GetAbilities().size()];
+		int ability_ind = abilityDistribution(gen);
+		chosen_ability = npc.GetAbilities()[ability_ind];
 
-		if (chosen_ability.resource == "mana" and npc.GetMana() >= chosen_ability.resource_cost)
-		{
-			spell_chosen = true;
-		}
-		else if (chosen_ability.resource == "energy" and npc.GetEnergy() >= chosen_ability.resource_cost)
-		{
-			spell_chosen = true;
-		}
-		else if (npc.GetClassName() == "Warrior")
+		if (chosen_ability.resource == "mana" and npc.GetMana() >= chosen_ability.resource_cost or
+			chosen_ability.resource == "energy" and npc.GetEnergy() >= chosen_ability.resource_cost or
+			npc.GetClassName() == "Warrior")
 		{
 			spell_chosen = true;
 		}
@@ -453,33 +425,51 @@ void EventHandler::NPCTurn(Player& player, NPC& npc)
 	if (chosen_ability.resource == "energy") { npc.IncreaseEnergy(-chosen_ability.resource_cost); }
 	if (chosen_ability.damage != 0)
 	{
-		float damage = chosen_ability.damage;
-		for (std::pair<std::string, std::pair<int, int>> effect : npc.positive_effects)
-		{
-			if (effect.first == "damage_boost" and effect.second.second > 0)
-			{
-				damage *= (1 + effect.second.first / 100);
-			}
-		}
-
-		player.IncreaseHealth(-(int)damage);
+		float damage = CalculateBoostedDamage(chosen_ability.damage, npc.positive_effects);
+		player.IncreaseHealth(-static_cast<int>(damage));
 
 		if (chosen_ability.periodic_damage != 0)
 		{
-			player.negative_effects.push_back(
-				std::pair<std::string, std::pair<int, int>>("periodic_damage", std::pair<int, int>(chosen_ability.periodic_damage, chosen_ability.turns)));
+			player.negative_effects.emplace_back("periodic_damage", std::make_pair(chosen_ability.periodic_damage, chosen_ability.turns));
 		}
 	}
 	if (chosen_ability.mana != 0) { npc.IncreaseMana(chosen_ability.mana); }
 	if (chosen_ability.health != 0) { npc.IncreaseHealth(chosen_ability.health); }
 	if (chosen_ability.damage_boost != 0)
 	{
-		npc.positive_effects.push_back(
-			std::pair<std::string, std::pair<int, int>>("damage_boost", std::pair<int, int>(chosen_ability.damage_boost, chosen_ability.turns)));
+		npc.positive_effects.emplace_back("damage_boost", std::make_pair(chosen_ability.damage_boost, chosen_ability.turns));
 	}
 	if (chosen_ability.defense_boost != 0)
 	{
-		npc.positive_effects.push_back(
-			std::pair<std::string, std::pair<int, int>>("defense_boost", std::pair<int, int>(chosen_ability.defense_boost, chosen_ability.turns)));
+		npc.positive_effects.emplace_back("defense_boost", std::make_pair(chosen_ability.defense_boost, chosen_ability.turns));
 	}
+}
+
+void EventHandler::HandleEffects(Character& character, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
+{
+	for (auto& effect : effects)
+	{
+		if (effect.second.second > 0)
+		{
+			effect.second.second -= 1;
+
+			if (effect.first == "periodic_damage")
+			{
+				character.IncreaseHealth(-effect.second.first);
+			}
+		}
+	}
+}
+
+float EventHandler::CalculateBoostedDamage(float base_damage, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
+{
+	float damage = base_damage;
+	for (const auto& effect : effects) 
+	{
+		if (effect.first == "damage_boost" && effect.second.second > 0)
+		{
+			damage *= (1 + effect.second.first / 100.0);
+		}
+	}
+	return damage;
 }

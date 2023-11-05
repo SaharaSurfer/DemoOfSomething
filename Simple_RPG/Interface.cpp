@@ -2,64 +2,62 @@
 
 void Interface::LoadLocation(const std::string& LocationName)
 {
-	std::ifstream file_in(LocationName.c_str());
-    std::string row;
-    while(std::getline(file_in, row))
+	std::ifstream file_in(LocationName);
+    if (file_in.is_open())
     {
-        ASCII_ART_HEIGHT++;
-        ascii_art.push_back(row);
+        std::string row;
+        while (std::getline(file_in, row))
+        {
+            ASCII_ART_HEIGHT++;
+            ascii_art.push_back(row);
+        }
+        file_in.close();
+        CreateFrame();
     }
-    file_in.close();
-    
-    CreateFrame();
 }
 
 void Interface::CreateFrame()
 {
-    int offset_y = (int)(ASCII_ART_HEIGHT * 0.1);
+    int offset_y = static_cast<int>(ASCII_ART_HEIGHT * 0.1);
     offset_y += offset_y % 2;
     FRAME_HEIGHT = ASCII_ART_HEIGHT + offset_y * 2;
-    
-    framed_art.push_back("+");
-    framed_art[0].append(FRAME_WIDTH - 2, '-');
-    framed_art[0] += "+\n";
 
+    framed_art.push_back("+" + std::string(FRAME_WIDTH - 2, '-') + "+\n");
     for (int i = 1; i < FRAME_HEIGHT - 1; i++)
     {
-        framed_art.push_back("|");
         if (i >= offset_y and i < ASCII_ART_HEIGHT + offset_y)
         {
-            int ln = (int)ascii_art[i - offset_y].length();
-
-            framed_art[i].insert(1, (FRAME_WIDTH - ln) / 2, ' ');
-            framed_art[i] += ascii_art[i - offset_y];
-            framed_art[i].append(FRAME_WIDTH - (int)framed_art[i].length() - 1, ' ');
+            int ln = static_cast<int>(ascii_art[i - offset_y].length());
+            std::string frame_line = "|" + std::string((FRAME_WIDTH - ln) / 2, ' ') + ascii_art[i - offset_y];
+            frame_line += std::string(FRAME_WIDTH - frame_line.length() - 1, ' ') + "|\n";
+            framed_art.push_back(frame_line);
         }
         else
         {
-            framed_art[i].append(FRAME_WIDTH - 2, ' ');
+            framed_art.push_back("|" + std::string(FRAME_WIDTH - 2, ' ') + "|\n");
         }
-        framed_art[i] += "|\n";
     }
-    framed_art.push_back("+");
-    framed_art[FRAME_HEIGHT - 1].append(FRAME_WIDTH - 2, '-');
-    framed_art[FRAME_HEIGHT - 1] += "+\n";
+    framed_art.push_back("+" + std::string(FRAME_WIDTH - 2, '-') + "+\n");
 }
 
 void Interface::RenderLocation()
 {
-    for (int i = 0; i < FRAME_HEIGHT; i++)
+    for (const auto& line: framed_art)
     {
-        std::cout << framed_art[i];
+        std::cout << line;
     }
 }
 
 std::string Interface::LoadText(const std::string& LocationName)
 {
-    std::ifstream file_in(LocationName.c_str());
-    std::string str(std::istreambuf_iterator<char>{file_in}, {});
-    file_in.close();
-    return str;
+    std::ifstream file_in(LocationName);
+    if (file_in.is_open())
+    {
+        std::string str(std::istreambuf_iterator<char>{file_in}, {});
+        file_in.close();
+        return str;
+    }
+    else { return ""; }
 }
 
 void Interface::RenderText(const std::string& Text)
@@ -104,7 +102,40 @@ void Interface::RenderText(const std::string& Text)
 json Interface::LoadJSON(const std::string& LocationName)
 {
     std::string str = LoadText(LocationName);
-    json table{ json::parse(str) };
+    if (!str.empty())
+    {
+        json table{ json::parse(str) };
+        return table;
+    }
+    return json();
+}
 
-    return table;
+size_t Interface::CollectPlayerChoice(size_t upper_border)
+{
+    std::string player_choice;
+    std::getline(std::cin, player_choice);
+
+    int choice = 0;
+
+    try {
+        choice = std::stoi(player_choice);
+    }
+    catch (const std::invalid_argument& e) {
+        std::cout << "Invalid input. Please enter a number.\n";
+        return CollectPlayerChoice(upper_border);
+    }
+    catch (const std::out_of_range& e) {
+        std::cout << "Input is out of range. Please enter a valid number.\n";
+        return CollectPlayerChoice(upper_border);
+    }
+
+    if (choice > 0 and choice <= upper_border) 
+    {
+        return static_cast<size_t>(choice - 1);
+    }
+    else
+    {
+        std::cout << "Please choose a number greater than 0 and less than " << upper_border << ".\n";
+        return CollectPlayerChoice(upper_border);
+    }
 }

@@ -22,5 +22,10 @@ struct Ability
 	Ability();
 	Ability(json info);
 
+	void AssignValue(const std::string& key, int& value, const json& info);
+	void AssignValue(const std::string& key, const std::string& res, int& res_cost, const json& info);
+	void AddAbilityDetail(std::string& text, const std::string& action, int value, const std::string& attribute);
+
+	void ParseAbilityDetails(const json& info);
 	void ShowInfo();
 };
