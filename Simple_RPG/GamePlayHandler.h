@@ -1,8 +1,7 @@
 #pragma once
 #include "Interface.h"
 #include "EventHandler.h"
-#include "Player.h"
-#include "NPC.h"
+#include "Character.h"
 #include "Lockpick.h"
 #include "Key.h"
 #include "Lock.h"
@@ -12,7 +11,7 @@ class GamePlayHandler
 private:
 	Interface interface;
 	EventHandler event_handler;
-	Player player;
+	Character player;
 
 	Race ChoosingRace(const json& races);
 	void DisplayRaceBonuses(const json& race_details);

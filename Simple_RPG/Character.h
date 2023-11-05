@@ -6,22 +6,13 @@
 #include "Ability.h"
 #include "Race.h"
 #include "GameClass.h"
+#include "CharacterCharacteristics.h"
 
 class Character
 {
 protected:
-	Race race;
-	GameClass gameclass;
-
 	std::string name;
 	int experience = 0;
-	int level = 1;
-	int health = 100, max_health = 100;
-	int mana = 100, max_mana = 100;
-	int energy = 100, max_energy = 100;
-	int defense = 10, attack = 15;
-	int strength = 10, dexterity = 10;
-	int intelligence = 10, wisdom = 10, charisma = 10;
 
 	std::vector<std::shared_ptr<Item>> equipment;
 	std::vector<std::shared_ptr<Item>> inventory;
@@ -29,38 +20,32 @@ protected:
 	std::vector<Ability> abilities;
 
 public:
+	CharacterCharacteristics characteristics;
+
 	std::vector<std::pair<std::string, std::pair<int, int>>> positive_effects, negative_effects;
 
 	Character();
 	Character(const Race& r, const GameClass& gc);
+	Character(const Race& r, const GameClass& gc, int lvl);
 
 	void LoadAbilitiesFromJSON();
 
-	std::string GetRaceName();
-	std::string GetClassName();
 	std::string GetName();
 	void SetName(const std::string& new_name);
 
 	void GainExp(int exp);
 
-	int GetHealthPercent();
-	int GetMaxHealth();
-	int GetHealth();
-	void IncreaseHealth(int shift);
-	void IncreaseMana(int shift);
-	void IncreaseEnergy(int shift);
+	bool IsDead();
 
-	int GetAttack();
-	int GetMana();
-	int GetEnergy();
+	std::vector<Ability> GetAbilities();
 
-	int GetStatBonus(std::string stat_name);
-
-	std::string GetCharacterStats();
 	std::string GetInventoryStats();
 
 	void AddItemToInventory(std::shared_ptr<Item> item);
 	void DeleteItemFromInventory(const std::string& itemName);
 	std::shared_ptr<Item> GetItemFromInventory(const std::string& itemName);
 	int CountItemInInventory(const std::string& itemName);
+	
+	std::string GetResourceInfo();
+	std::string GetCharacterStats();
 };

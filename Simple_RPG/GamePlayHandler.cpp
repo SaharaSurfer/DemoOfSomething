@@ -89,7 +89,7 @@ void GamePlayHandler::CreatePlayerCharacter()
 
 	Race race_choice = ChoosingRace(interface.LoadJSON("JsonFiles\\Race.json"));
 	GameClass class_choice = ChoosingClass(interface.LoadJSON("JsonFiles\\Class.json"));
-	player = Player(race_choice, class_choice);
+	player = Character(race_choice, class_choice);
 	system("cls");
 }
 

@@ -2,7 +2,7 @@
 #include <random>
 #include "Item.h"
 #include "Lock.h"
-#include "Player.h"
+#include "Character.h"
 
 class Lockpick : public Item
 {
@@ -12,5 +12,5 @@ private:
 public:
 	Lockpick();
 
-	bool UnlockObject(Lock& object, Player& player);
+	bool UnlockObject(Lock& object, Character& player);
 };

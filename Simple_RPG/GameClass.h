@@ -2,6 +2,8 @@
 #include <string>
 #include "json.hpp"
 
+using json = nlohmann::json;
+
 struct GameClass
 {
 	std::string name;
