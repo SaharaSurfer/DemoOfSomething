@@ -40,7 +40,7 @@ int EventHandler::ReceiveItems(json node, Character& player)
 				auto key = std::dynamic_pointer_cast<Key>(item);
 				key -> SetName(std::string(node["key_name"]));
 			}
-			player.AddItemToInventory(std::move(item));
+			player.inventory.AddItem(std::move(item));
 		}
 	}
 
@@ -60,9 +60,9 @@ int EventHandler::ProcessLockpicking(json node, Character& player)
 		Lock lock = Lock();
 		lock.SetLockLevel(node["security_level"]);
 
-		while (player.CountItemInInventory("Lockpick") > 0)
+		while (player.inventory.CountItem("Lockpick") > 0)
 		{
-			std::shared_ptr<Item> item = player.GetItemFromInventory("Lockpick");
+			std::shared_ptr<Item> item = player.inventory.GetItem("Lockpick");
 			std::shared_ptr<Lockpick> lockpick = std::dynamic_pointer_cast<Lockpick>(item);
 
 			bool is_open = lockpick -> UnlockObject(lock, player);
@@ -73,9 +73,9 @@ int EventHandler::ProcessLockpicking(json node, Character& player)
 			}
 
 			interface.RenderText(std::string(failure_text[distribution(gen)]) + "\n");
-			player.DeleteItemFromInventory("Lockpick");
+			player.inventory.DeleteItem("Lockpick");
 
-			int lockpick_num = player.CountItemInInventory("Lockpick");
+			int lockpick_num = player.inventory.CountItem("Lockpick");
 			std::string text =
 				"<You have " +
 				std::to_string(lockpick_num) +
@@ -97,7 +97,7 @@ int EventHandler::UseKeyToOpen(json node, Character& player)
 		Lock lock = Lock();
 		lock.SetKeyName(std::string(node["key_needed"]));
 
-		std::shared_ptr<Item> item = player.GetItemFromInventory(std::string(node["key_needed"]));
+		std::shared_ptr<Item> item = player.inventory.GetItem(std::string(node["key_needed"]));
 		if (auto key = std::dynamic_pointer_cast<Key>(item))
 		{
 			key -> UnlockObject(lock);

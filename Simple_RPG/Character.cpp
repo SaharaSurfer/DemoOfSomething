@@ -76,52 +76,11 @@ std::vector<Ability> Character::GetAbilities()
 std::string Character::GetInventoryStats()
 {
 	std::string text = "";
-	for (const auto& item : inventory)
+	for (const auto& item : inventory.GetInventory())
 	{
 		text += item -> GetName() + ", ";
 	}
 	return text;
-}
-
-void Character::AddItemToInventory(std::shared_ptr<Item> item)
-{
-	if (inventory.size() < max_inventory_size) 
-	{
-		inventory.push_back(std::move(item));
-	}
-}
-
-void Character::DeleteItemFromInventory(const std::string& itemName)
-{
-	for (auto it = inventory.begin(); it != inventory.end(); it++)
-	{
-		if ((*it)->GetName() == itemName)
-		{
-			inventory.erase(it);
-			break;
-		}
-	}
-}
-
-std::shared_ptr<Item> Character::GetItemFromInventory(const std::string& itemName) 
-{
-	for (auto& item : inventory)
-	{
-		if (item -> GetName() == itemName)
-		{
-			return item;
-		}
-	}
-
-	return nullptr;
-}
-
-int Character::CountItemInInventory(const std::string& itemName)
-{
-	return static_cast<int>
-		(std::count_if(inventory.begin(), inventory.end(),
-		[&itemName](const std::shared_ptr<Item>& item) 
-		{ return item->GetName() == itemName; }));
 }
 
 std::string Character::GetResourceInfo()
