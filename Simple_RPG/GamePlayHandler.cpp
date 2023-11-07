@@ -1,5 +1,11 @@
 #include "GamePlayHandler.h"
 
+static void ClearConsole(void)
+{
+	system("cls||clear");
+	return;
+}
+
 GamePlayHandler::GamePlayHandler() {}
 
 Race GamePlayHandler::ChoosingRace(const json& races)
@@ -85,20 +91,19 @@ GameClass GamePlayHandler::LoadClass(const json& classes, const std::string& cla
 void GamePlayHandler::CreatePlayerCharacter()
 {
 	DisplayIntroductoryText("Text\\Entry.txt");
-	DisplayCharacterCreationScreen("Locations\\banner.txt");
+	DisplayCharacterCreationScreen("Locations\\CharacterCreation.txt");
 
 	Race race_choice = ChoosingRace(interface.LoadJSON("JsonFiles\\Race.json"));
 	GameClass class_choice = ChoosingClass(interface.LoadJSON("JsonFiles\\Class.json"));
 	player = Character(race_choice, class_choice);
-	system("cls");
+	ClearConsole();
 }
 
 void GamePlayHandler::DisplayIntroductoryText(const std::string& filename)
 {
 	std::string entry = interface.LoadText(filename);
 	interface.RenderText(entry);
-	system("pause");
-	system("cls");
+	ClearConsole();
 }
 
 void GamePlayHandler::DisplayCharacterCreationScreen(const std::string& filename)

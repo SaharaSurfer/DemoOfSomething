@@ -1,5 +1,11 @@
 #include "Interface.h"
 
+static void GamePause(void)
+{
+    system("echo Press any key to continue . . . && ( read x 2> nul; rm nul || pause > nul )");
+    return;
+}
+
 void Interface::LoadLocation(const std::string& LocationName)
 {
 	std::ifstream file_in(LocationName);
@@ -66,7 +72,7 @@ void Interface::RenderText(const std::string& Text)
     for (int i = 0; i < Text.size(); i++)
     {
         //pause = Text[i] == '.' or Text[i] == '!' or Text[i] == '?'
-        //   ? 150 : (Text[i] == ' ' ? 30 : 15);
+          //? 150 : (Text[i] == ' ' ? 30 : 15);
         std::this_thread::sleep_for(std::chrono::milliseconds(pause));
 
         pointer++;
@@ -89,7 +95,7 @@ void Interface::RenderText(const std::string& Text)
         {
             splitter = std::string::npos;
             pointer = 0;
-            system("pause");
+            GamePause();
         }
         else if (Text[i] == '\n')
         {

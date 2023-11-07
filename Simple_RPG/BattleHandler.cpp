@@ -19,6 +19,8 @@ int BattleHandler::HandleFight()
 	{
 		if (player.IsDead())
 		{
+			interface.LoadLocation("Locations\\GameOver.txt");
+			interface.RenderLocation();
 			return 1;
 		}
 
