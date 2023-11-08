@@ -1,4 +1,4 @@
-#include "Lockpick.h"
+#include "../header/Lockpick.h"
 
 Lockpick::Lockpick() : Item(), generator(std::random_device{}())
 {

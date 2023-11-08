@@ -1,4 +1,4 @@
-#include "CharacterCharacteristics.h"
+#include "../header/CharacterCharacteristics.h"
 
 CharacterCharacteristics::CharacterCharacteristics() {}
 

@@ -1,4 +1,4 @@
-﻿#include "EventHandler.h"
+﻿#include "../header/EventHandler.h"
 
 int EventHandler::HandleEvent(json node, Character& player)
 {

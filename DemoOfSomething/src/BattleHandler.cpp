@@ -1,4 +1,4 @@
-#include "BattleHandler.h"
+#include "../header/GamePlayHandler.h"
 
 BattleHandler::BattleHandler(json node, Character& hero)
 {

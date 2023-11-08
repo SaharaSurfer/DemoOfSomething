@@ -1,4 +1,4 @@
-#include "Lock.h"
+#include "../header/Lock.h"
 
 Lock::Lock() {}
 
