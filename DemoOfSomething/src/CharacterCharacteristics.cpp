@@ -4,22 +4,31 @@ CharacterCharacteristics::CharacterCharacteristics() {}
 
 CharacterCharacteristics::CharacterCharacteristics(const Race& r, const GameClass& gc) : race(r), gameclass(gc)
 {
-	strength += r.strengthBonus;
-	dexterity += r.dexterityBonus;
-	intelligence += r.intelligenceBonus;
-	wisdom += r.wisdomBonus;
-	charisma += r.charismaBonus;
-
-	max_health += gc.healthBonus * level;
-	health = max_health;
-	mana += gc.manaBonus * level;
-	defense += gc.defenseBonus * level;
-	attack += gc.attackBonus * level;
+	AddStatBonus();
 }
 
 CharacterCharacteristics::CharacterCharacteristics(const Race& r, const GameClass& gc, int lvl) : race(r), gameclass(gc), level(lvl)
 {
-	CharacterCharacteristics(r, gc);
+	for (int i = 0; i < level; i++)
+	{
+		AddStatBonus();
+	}
+}
+
+void CharacterCharacteristics::AddStatBonus()
+{
+	strength = strength + race.strengthBonus;
+	dexterity = dexterity + race.dexterityBonus;
+	intelligence = intelligence + race.intelligenceBonus;
+	wisdom = wisdom + race.wisdomBonus;
+	charisma = charisma + race.charismaBonus;
+
+	max_health += gameclass.healthBonus;
+	health = max_health;
+	max_mana += gameclass.manaBonus;
+	mana = max_mana;
+	defense += gameclass.defenseBonus;
+	attack += gameclass.attackBonus;
 }
 
 std::string CharacterCharacteristics::GetRaceName()

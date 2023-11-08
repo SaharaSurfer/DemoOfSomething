@@ -25,6 +25,8 @@ public:
 	CharacterCharacteristics(const Race& r, const GameClass& gc);
 	CharacterCharacteristics(const Race& r, const GameClass& gc, int lvl);
 
+	void AddStatBonus();
+
 	std::string GetRaceName();
 	std::string GetClassName();
 
