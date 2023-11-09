@@ -131,40 +131,34 @@ int EventHandler::ProcessDialog(json node, Character& player)
 		for (size_t i = 0; i < current_options.size(); i++)
 		{
 			std::string text = std::to_string(i + 1) + ") " + std::string(current_options[i]["choice_name"]) + "\n";
-			interface.RenderText(text);
+			std::cout << text;
 		}
 
 		//Getting the player's solution
 		size_t choice = interface.CollectPlayerChoice(current_options.size());
-		if (choice < current_options.size())
+		
+		const json& chosen_node = current_options[choice];
+		interface.RenderText(std::string(chosen_node["hero_line"]) + "\n");
+		interface.RenderText(std::string(chosen_node["npc_line"]) + "\n");
+
+		if (chosen_node["is_end"] == 1)
 		{
-			const json& chosen_node = current_options[choice];
-			interface.RenderText(std::string(chosen_node["hero_line"]) + "\n");
-			interface.RenderText(std::string(chosen_node["npc_line"]) + "\n");
-
-			if (chosen_node["is_end"] == 1)
-			{
-				current_options.clear();
-			}
-
-			//Removing already used branch
-			if (!current_options.empty())
-			{
-				current_options.erase(current_options.begin() + choice - 1);
-			}
-
-			//Recording new branches if any
-			if (chosen_node.contains("options"))
-			{
-				for (const auto& node : chosen_node["options"])
-				{
-					current_options.push_back(node);
-				}
-			}
+			current_options.clear();
 		}
-		else
+
+		//Removing already used branch
+		if (!current_options.empty())
 		{
-			interface.RenderText("Invalid choice. Please try again.\n");
+			current_options.erase(current_options.begin() + choice - 1);
+		}
+
+		//Recording new branches if any
+		if (chosen_node.contains("options"))
+		{
+			for (const auto& node : chosen_node["options"])
+			{
+				current_options.push_back(node);
+			}
 		}
 	}
 

@@ -10,13 +10,13 @@ GamePlayHandler::GamePlayHandler() {}
 
 Race GamePlayHandler::ChoosingRace(const json& races)
 {
-	interface.RenderText("Choose your race: \n");
+	std::cout << "Choose your race: \n";
 
 	int race_index = 0;
 	for (auto kv : races[0].items())
 	{
 		race_index++;
-		interface.RenderText(std::to_string(race_index) + ") " + kv.key() + ": ");
+		std::cout << std::to_string(race_index) + ") " + kv.key() + ": ";
 		DisplayRaceBonuses(kv.value());
 	}
 
@@ -32,7 +32,7 @@ void GamePlayHandler::DisplayRaceBonuses(const json& race_details)
 		{
 			std::string value = std::to_string((int)pair.value());
 			std::string key = pair.key().substr(0, pair.key().find('B'));
-			interface.RenderText("+" + value + " " + key + "; ");
+			std::cout << "+" + value + " " + key + "; ";
 		}
 	}
 	std::cout << "\n";
@@ -50,13 +50,13 @@ Race GamePlayHandler::LoadRace(const json& races, const std::string& race_choice
 
 GameClass GamePlayHandler::ChoosingClass(const json& classes)
 {
-	interface.RenderText("Choose your class: \n");
+	std::cout << "Choose your class: \n";
 
 	int class_index = 0;
 	for (auto kv : classes[0].items())
 	{
 		class_index++;
-		interface.RenderText(std::to_string(class_index) + ") " + kv.key() + ": ");
+		std::cout << std::to_string(class_index) + ") " + kv.key() + ": ";
 		DisplayClassBonuses(kv.value());
 	}
 
@@ -72,7 +72,7 @@ void GamePlayHandler::DisplayClassBonuses(const json& class_details)
 		{
 			std::string value = std::to_string((int)pair.value());
 			std::string key = pair.key().substr(0, pair.key().find('B'));
-			interface.RenderText("+" + value + " " + key + "; ");
+			std::cout << "+" + value + " " + key + "; ";
 		}
 	}
 	std::cout << "\n";
@@ -160,7 +160,7 @@ void GamePlayHandler::DisplayPlayerChoices(const std::vector<json>& nodes_in_use
 	for (size_t i = 0; i < nodes_in_use.size(); i++)
 	{
 		std::string text = std::to_string(i + 1) + ") " + std::string(nodes_in_use[i]["choice_name"]) + "\n";
-		interface.RenderText(text);
+		std::cout << text;
 	}
 }
 
