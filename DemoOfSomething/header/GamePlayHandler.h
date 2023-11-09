@@ -9,7 +9,7 @@
 class GamePlayHandler
 {
 private:
-	Interface interface;
+	Interface& interface = Interface::GetInstance();
 	EventHandler event_handler;
 	Character player;
 

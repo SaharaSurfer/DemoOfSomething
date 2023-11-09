@@ -5,7 +5,7 @@
 class Item
 {
 protected:
-	Interface interface;
+	Interface& interface = Interface::GetInstance();
 
 	std::string name = "";
 	std::string description = "";

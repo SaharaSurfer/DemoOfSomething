@@ -13,6 +13,8 @@ using json = nlohmann::json;
 class Interface
 {
 private:
+	Interface() = default;
+
 	const int ASCII_ART_WIDTH = 50, FRAME_WIDTH = 60;
 	int ASCII_ART_HEIGHT = 0, FRAME_HEIGHT = 0;
 
@@ -22,6 +24,11 @@ private:
 	void CreateFrame();
 
 public:
+	static Interface& GetInstance();
+
+	Interface(const Interface&) = delete;
+	Interface& operator=(const Interface&) = delete;
+
 	void LoadLocation(const std::string& LocationName);
 	void RenderLocation();
 
@@ -31,4 +38,6 @@ public:
 	json LoadJSON(const std::string& LocationName);
 
 	size_t CollectPlayerChoice(size_t upper_border);
+
+	~Interface() = default;
 };

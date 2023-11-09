@@ -1,9 +1,8 @@
 #include "../header/GamePlayHandler.h"
 
-BattleHandler::BattleHandler(json node, Character& hero)
+BattleHandler::BattleHandler(json node, Character& hero) : player(hero)
 {
 	enemies = CreateNPCs(node);
-	player = hero;
 }
 
 int BattleHandler::HandleFight()
@@ -272,7 +271,7 @@ void BattleHandler::HandleEffects(Character& character, std::vector<std::pair<st
 
 float BattleHandler::CalculateBoostedDamage(float base_damage, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
 {
-	float damage = base_damage;
+	double damage = base_damage;
 	for (const auto& effect : effects)
 	{
 		if (effect.first == "damage_boost" && effect.second.second > 0)

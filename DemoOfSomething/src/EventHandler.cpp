@@ -173,8 +173,6 @@ int EventHandler::ProcessSurpriseAttack(json node, Character& player)
 
 	if (distribution(gen) + player.characteristics.GetStatBonus(node["stat_check"]) < node["complexity"])
 	{
-		interface.LoadLocation("Locations\\GameOver.txt");
-		interface.RenderLocation();
 		interface.RenderText(node["fail"]);
 		return 1;
 	}

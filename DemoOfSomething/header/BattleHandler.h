@@ -9,8 +9,8 @@
 class BattleHandler
 {
 private:
-	Interface interface;
-	Character player;
+	Interface& interface = Interface::GetInstance();
+	Character& player;
 	std::vector<Character> enemies;
 
 	std::vector<Character> CreateNPCs(json node);

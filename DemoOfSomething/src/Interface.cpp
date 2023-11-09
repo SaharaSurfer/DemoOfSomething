@@ -6,8 +6,19 @@ static void GamePause(void)
     return;
 }
 
+Interface& Interface::GetInstance()
+{
+    static Interface instance;
+    return instance;
+}
+
 void Interface::LoadLocation(const std::string& LocationName)
 {
+    ascii_art.clear();
+    framed_art.clear();
+    ASCII_ART_HEIGHT = 0;
+    FRAME_HEIGHT = 0;
+
 	std::ifstream file_in(LocationName);
     if (file_in.is_open())
     {
@@ -68,10 +79,10 @@ std::string Interface::LoadText(const std::string& LocationName)
 
 void Interface::RenderText(const std::string& Text)
 {
-    int pause = 0, pointer = 0, splitter = std::string::npos;
+    int pause = 0, pointer = 0;
+    size_t splitter = std::string::npos;
     for (int i = 0; i < Text.size(); i++)
     {
-        //PAUSE BEFORE NEXT SYMBOL
         pause = Text[i] == '.' or Text[i] == '!' or Text[i] == '?'
           ? 150 : (Text[i] == ' ' ? 30 : 15);
         std::this_thread::sleep_for(std::chrono::milliseconds(pause));

@@ -16,7 +16,7 @@ Character::Character(const Race& r, const GameClass& gc, int lvl)
 
 void Character::LoadAbilitiesFromJSON()
 {
-	Interface interface;
+	Interface& interface = Interface::GetInstance();
 	const json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
 
 	std::string class_name = characteristics.GetClassName();
@@ -55,7 +55,7 @@ void Character::GainExp(int exp)
 		characteristics.IncrementLevel();
 		characteristics.AddClassBonus();
 
-		Interface interface;
+		Interface& interface = Interface::GetInstance();
 		const json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");
 		for (const auto& node : list_of_abilities[characteristics.GetClassName()][level])
 		{
