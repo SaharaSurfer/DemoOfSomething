@@ -6,6 +6,10 @@ int main()
 
 	game_engine.CreatePlayerCharacter();
 	game_engine.EscapeFromCage();
+	
+	Interface interface;
+	interface.LoadLocation("Locations\\GameOver.txt");
+	interface.RenderLocation();
 
 	return 0;
 }

@@ -53,6 +53,7 @@ void Character::GainExp(int exp)
 	{
 		experience %= exp_progression[level];
 		characteristics.IncrementLevel();
+		characteristics.AddClassBonus();
 
 		Interface interface;
 		const json list_of_abilities = interface.LoadJSON("JsonFiles\\Abilities.json");

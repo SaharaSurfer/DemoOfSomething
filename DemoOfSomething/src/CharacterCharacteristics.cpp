@@ -4,25 +4,30 @@ CharacterCharacteristics::CharacterCharacteristics() {}
 
 CharacterCharacteristics::CharacterCharacteristics(const Race& r, const GameClass& gc) : race(r), gameclass(gc)
 {
-	AddStatBonus();
+	AddRaceBonus();
+	AddClassBonus();
 }
 
 CharacterCharacteristics::CharacterCharacteristics(const Race& r, const GameClass& gc, int lvl) : race(r), gameclass(gc), level(lvl)
 {
+	AddRaceBonus();
 	for (int i = 0; i < level; i++)
 	{
-		AddStatBonus();
+		AddClassBonus();
 	}
 }
 
-void CharacterCharacteristics::AddStatBonus()
+void CharacterCharacteristics::AddRaceBonus()
 {
-	strength = strength + race.strengthBonus;
-	dexterity = dexterity + race.dexterityBonus;
-	intelligence = intelligence + race.intelligenceBonus;
-	wisdom = wisdom + race.wisdomBonus;
-	charisma = charisma + race.charismaBonus;
+	strength += race.strengthBonus;
+	dexterity += race.dexterityBonus;
+	intelligence += race.intelligenceBonus;
+	wisdom += race.wisdomBonus;
+	charisma += race.charismaBonus;
+}
 
+void CharacterCharacteristics::AddClassBonus()
+{
 	max_health += gameclass.healthBonus;
 	health = max_health;
 	max_mana += gameclass.manaBonus;

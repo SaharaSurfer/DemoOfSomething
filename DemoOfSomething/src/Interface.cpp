@@ -71,8 +71,9 @@ void Interface::RenderText(const std::string& Text)
     int pause = 0, pointer = 0, splitter = std::string::npos;
     for (int i = 0; i < Text.size(); i++)
     {
-        //pause = Text[i] == '.' or Text[i] == '!' or Text[i] == '?'
-          //? 150 : (Text[i] == ' ' ? 30 : 15);
+        //PAUSE BEFORE NEXT SYMBOL
+        pause = Text[i] == '.' or Text[i] == '!' or Text[i] == '?'
+          ? 150 : (Text[i] == ' ' ? 30 : 15);
         std::this_thread::sleep_for(std::chrono::milliseconds(pause));
 
         pointer++;
