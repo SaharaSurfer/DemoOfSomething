@@ -12,15 +12,17 @@
 class EventHandler
 {
 private:
-	Interface& interface = Interface::GetInstance();
+	Interface& interface;
 
 	int ReceiveItems(json node, Character& player);
 	int ProcessLockpicking(json node, Character& player);
 	int UseKeyToOpen(json node, Character& player);
-	int ProcessDialog(json node, Character& player);
+	int ProcessDialog(json node, Character& player);	
 	int ProcessSurpriseAttack(json node, Character& player);
 	int ProcessFight(json node, Character& player);
 
 public:
+	EventHandler(Interface& intf);
+
 	int HandleEvent(json node, Character& player);
 };

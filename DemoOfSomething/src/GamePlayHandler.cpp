@@ -6,7 +6,7 @@ static void ClearConsole(void)
 	return;
 }
 
-GamePlayHandler::GamePlayHandler() {}
+GamePlayHandler::GamePlayHandler(Interface& intf) : interface(intf) {}
 
 Race GamePlayHandler::ChoosingRace(const json& races)
 {

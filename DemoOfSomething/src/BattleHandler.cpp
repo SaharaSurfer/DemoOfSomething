@@ -1,6 +1,6 @@
 #include "../header/GamePlayHandler.h"
 
-BattleHandler::BattleHandler(json node, Character& hero) : player(hero)
+BattleHandler::BattleHandler(json node, Character& hero, Interface& intf) : player(hero), interface(intf)
 {
 	enemies = CreateNPCs(node);
 }

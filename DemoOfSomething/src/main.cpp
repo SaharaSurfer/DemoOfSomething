@@ -2,12 +2,12 @@
 
 int main()
 {
-	GamePlayHandler game_engine;
+	Interface& interface = Interface::GetInstance();
+	GamePlayHandler game_engine(interface);
 
 	game_engine.CreatePlayerCharacter();
 	game_engine.EscapeFromCage();
 	
-	Interface& interface = Interface::GetInstance();
 	interface.LoadLocation("Locations\\GameOver.txt");
 	interface.RenderLocation();
 

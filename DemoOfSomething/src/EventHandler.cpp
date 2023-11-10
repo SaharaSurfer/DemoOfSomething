@@ -1,5 +1,7 @@
 ﻿#include "../header/EventHandler.h"
 
+EventHandler::EventHandler(Interface& intf) : interface(intf) {}
+
 int EventHandler::HandleEvent(json node, Character& player)
 {
 	static const std::unordered_map<std::string, std::function<int(EventHandler&, json, Character&)>> eventHandlers =
@@ -185,7 +187,7 @@ int EventHandler::ProcessSurpriseAttack(json node, Character& player)
 
 int EventHandler::ProcessFight(json node, Character& player)
 {
-	BattleHandler battle(node, player);
+	BattleHandler battle(node, player, interface);
 	int is_player_lost = battle.HandleFight();
 
 	return is_player_lost;

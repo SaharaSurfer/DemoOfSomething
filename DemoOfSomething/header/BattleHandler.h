@@ -9,7 +9,7 @@
 class BattleHandler
 {
 private:
-	Interface& interface = Interface::GetInstance();
+	Interface& interface;
 	Character& player;
 	std::vector<Character> enemies;
 
@@ -26,7 +26,7 @@ private:
 	float CalculateBoostedDamage(float base_damage, std::vector<std::pair<std::string, std::pair<int, int>>>& effects);
 
 public:
-	BattleHandler(json node, Character& hero);
+	BattleHandler(json node, Character& hero, Interface& intf);
 
 	int HandleFight();
 };

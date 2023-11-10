@@ -1,16 +1,16 @@
 #pragma once
 #include "Interface.h"
-#include "EventHandler.h"
 #include "Character.h"
 #include "Lockpick.h"
 #include "Key.h"
 #include "Lock.h"
+#include "EventHandler.h"
 
 class GamePlayHandler
 {
 private:
-	Interface& interface = Interface::GetInstance();
-	EventHandler event_handler;
+	Interface& interface;
+	EventHandler event_handler{interface};
 	Character player;
 
 	Race ChoosingRace(const json& races);
@@ -30,7 +30,7 @@ private:
 	void AddNewBranches(std::vector<json>& nodes_in_use, const json& chosen_node);
 
 public:
-	GamePlayHandler();
+	GamePlayHandler(Interface& intf);
 
 	void CreatePlayerCharacter();
 	void EscapeFromCage();
