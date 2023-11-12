@@ -1,12 +1,9 @@
-#include "../header/GamePlayHandler.h"
+#include "../header/BattleEvent.h"
 
-BattleHandler::BattleHandler(json node, Character& hero, Interface& intf) : player(hero), interface(intf)
+int BattleEvent::Execute(json node, Character& player, Interface& interface)
 {
-	enemies = CreateNPCs(node);
-}
+	std::vector<Character> enemies = CreateNPCs(node, interface);
 
-int BattleHandler::HandleFight()
-{
 	int player_initiative = GenerateInitiative();
 	std::vector<int> enemy_initiatives = GenerateEnemyInitiative(enemies);
 
@@ -26,7 +23,7 @@ int BattleHandler::HandleFight()
 			if (initiative == player_initiative)
 			{
 				OutputCurrentFightState(player, enemies);
-				PlayerTurn(player, enemies);
+				PlayerTurn(player, enemies, interface);
 			}
 			else
 			{
@@ -41,7 +38,7 @@ int BattleHandler::HandleFight()
 	return 0;
 }
 
-std::vector<Character> BattleHandler::CreateNPCs(json node)
+std::vector<Character> BattleEvent::CreateNPCs(json node, Interface& interface)
 {
 	json classes = interface.LoadJSON("JsonFiles\\Class.json");
 	json races = interface.LoadJSON("JsonFiles\\Race.json");
@@ -65,7 +62,7 @@ std::vector<Character> BattleHandler::CreateNPCs(json node)
 	return enemies;
 }
 
-int BattleHandler::GenerateInitiative()
+int BattleEvent::GenerateInitiative()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -73,7 +70,7 @@ int BattleHandler::GenerateInitiative()
 	return distribution(gen);
 }
 
-std::vector<int> BattleHandler::GenerateEnemyInitiative(const std::vector<Character>& enemies)
+std::vector<int> BattleEvent::GenerateEnemyInitiative(const std::vector<Character>& enemies)
 {
 	std::vector<int> enemy_initiatives;
 
@@ -85,12 +82,12 @@ std::vector<int> BattleHandler::GenerateEnemyInitiative(const std::vector<Charac
 	return enemy_initiatives;
 }
 
-bool BattleHandler::AreAnyEnemyAlive(const std::vector<Character>& enemies)
+bool BattleEvent::AreAnyEnemyAlive(const std::vector<Character>& enemies)
 {
 	return std::any_of(enemies.cbegin(), enemies.cend(), [](Character npc) { return !npc.IsDead(); });
 }
 
-int BattleHandler::GetEnemyIndexByInitiative(const std::vector<int>& enemy_initiatives, int initiative)
+int BattleEvent::GetEnemyIndexByInitiative(const std::vector<int>& enemy_initiatives, int initiative)
 {
 	auto it = std::find(enemy_initiatives.begin(), enemy_initiatives.end(), initiative);
 	if (it != enemy_initiatives.end())
@@ -99,7 +96,7 @@ int BattleHandler::GetEnemyIndexByInitiative(const std::vector<int>& enemy_initi
 	}
 }
 
-void BattleHandler::OutputCurrentFightState(Character& player, std::vector<Character> enemies)
+void BattleEvent::OutputCurrentFightState(Character& player, std::vector<Character> enemies)
 {
 	const std::string separator_line = std::string(50, '-');
 
@@ -118,7 +115,7 @@ void BattleHandler::OutputCurrentFightState(Character& player, std::vector<Chara
 	std::cout << separator_line << "\n";
 }
 
-void BattleHandler::PlayerTurn(Character& player, std::vector<Character>& enemies)
+void BattleEvent::PlayerTurn(Character& player, std::vector<Character>& enemies, Interface& interface)
 {
 	HandleEffects(player, player.positive_effects);
 	HandleEffects(player, player.negative_effects);
@@ -197,7 +194,7 @@ void BattleHandler::PlayerTurn(Character& player, std::vector<Character>& enemie
 	}
 }
 
-void BattleHandler::NPCTurn(Character& player, Character& npc)
+void BattleEvent::NPCTurn(Character& player, Character& npc)
 {
 	HandleEffects(npc, npc.positive_effects);
 	HandleEffects(npc, npc.negative_effects);
@@ -253,7 +250,7 @@ void BattleHandler::NPCTurn(Character& player, Character& npc)
 	}
 }
 
-void BattleHandler::HandleEffects(Character& character, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
+void BattleEvent::HandleEffects(Character& character, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
 {
 	for (auto& effect : effects)
 	{
@@ -269,7 +266,7 @@ void BattleHandler::HandleEffects(Character& character, std::vector<std::pair<st
 	}
 }
 
-float BattleHandler::CalculateBoostedDamage(float base_damage, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
+float BattleEvent::CalculateBoostedDamage(float base_damage, std::vector<std::pair<std::string, std::pair<int, int>>>& effects)
 {
 	double damage = base_damage;
 	for (const auto& effect : effects)

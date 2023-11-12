@@ -1,25 +1,16 @@
 #pragma once
-#include <unordered_map>
-#include <functional>
-#include <deque>
-#include "Interface.h"
-#include "Character.h"
-#include "Lockpick.h"
-#include "Key.h"
-#include "Lock.h"
-#include "BattleHandler.h"
+#include "BattleEvent.h"
+#include "DialogEvent.h"
+#include "LockpickingEvent.h"
+#include "ReceiveItemsEvent.h"
+#include "SurpriseAttackEvent.h"
+#include "UseKeyEvent.h"
 
 class EventHandler
 {
 private:
 	Interface& interface;
-
-	int ReceiveItems(json node, Character& player);
-	int ProcessLockpicking(json node, Character& player);
-	int UseKeyToOpen(json node, Character& player);
-	int ProcessDialog(json node, Character& player);	
-	int ProcessSurpriseAttack(json node, Character& player);
-	int ProcessFight(json node, Character& player);
+	std::unordered_map<std::string, std::unique_ptr<GameEvent>> event_handlers;
 
 public:
 	EventHandler(Interface& intf);
